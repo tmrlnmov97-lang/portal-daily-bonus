@@ -19,6 +19,7 @@
   var ART = {
     coins:      { img: 'art-coins-stack.webp',        w: 104.4,  h: 69.6,   l: -2.2,   t: 15.06 },
     common:     { img: 'art-common-lootbox.webp',     w: 140.01, h: 121.89, l: -20.01, t: -13.68 },
+    commonLg:   { img: 'art-common-lootbox-lg.webp',  w: 140.01, h: 121.89, l: -20.01, t: -13.68 }, // тот же арт крупнее — для раскрытия
     commonOpen: { img: 'art-common-lootbox-open.webp', w: 137.93, h: 125.94, l: -13.93, t: -14.61 },
     diamond:    { img: 'art-diamond.webp',            w: 164.9,  h: 109.93, l: -32.45, t: -6.92 },
     rare:       { img: 'art-rare-lootbox.webp',       w: 138.8,  h: 120.83, l: -19.82, t: -13.13 },
@@ -131,10 +132,13 @@
           '<p class="streak"><img alt="" src="' + A + 'icon-fire.svg">До легендарного лутбокса ' + DAYS_TO_LEGENDARY + NB + 'дней</p>') +
         '<div class="reveal">' +
           '<div class="reveal__reward" role="status">' +
+            // Раскрытие: закрытый лутбокс трясётся → вспышка → открытый (тайминги в app.css, «Раскрытие лутбокса»)
             '<div class="reveal__art" aria-hidden="true"><div class="reveal__mirror">' +
               '<div class="reveal__rays"><img alt="" src="' + A + 'rays-reveal.svg"></div>' +
               '<div class="reveal__glow"><img alt="" src="' + A + 'glow-reveal.svg"></div>' +
+              art('commonLg', 'glow-common.svg', 'reveal__closed') +
               art('commonOpen', 'glow-common.svg', 'reveal__box') +
+              '<div class="reveal__flash"></div>' +
             '</div></div>' +
             '<p class="reveal__label">Выпало</p>' +
             '<div class="reveal__sum">' + art('coin', 'glow-coin.svg', 'reveal__coin') + '<span>' + REWARD.replace(' ', NB) + '</span></div>' +
@@ -199,6 +203,10 @@
     }
     // Системная кнопка «Назад» Telegram на экране награды
     if (inTelegram && tg.BackButton) { if (name === 'reveal') tg.BackButton.show(); else tg.BackButton.hide(); }
+    // Сильный вибро-отклик в момент открытия (80 % от 1,25 с анимации)
+    if (name === 'reveal' && opts && opts.animate && inTelegram && tg.HapticFeedback) {
+      setTimeout(function () { if (current === 'reveal') tg.HapticFeedback.impactOccurred('heavy'); }, 1000);
+    }
   }
 
   go('bonus');
