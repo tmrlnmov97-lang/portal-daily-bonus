@@ -217,6 +217,15 @@ ul { list-style: none; }
 .d7__rays { position: absolute; left: -60px; top: -60px; width: 200px; height: 200px; mix-blend-mode: screen; pointer-events: none; }
 .d7__rays img { width: 100%; height: 100%; }
 
+/* День 7 получен (120:1353): тихий фон без обводки, статус «Получено», открытый лутбокс на 50 % */
+.d7--claimed { background: var(--surface-card-done); }
+.d7--claimed::after { display: none; }
+.d7--claimed .d7__title { color: var(--text-tertiary); }
+.d7--claimed .d7__art { opacity: 0.5; }
+.d7--claimed .d7__art .art { transform: scaleX(-1); } /* в макете открытый лутбокс отражён, как на экране раскрытия */
+.d7__status { display: flex; align-items: center; gap: 4px; font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; color: var(--accent-green); letter-spacing: var(--tracking-sm); }
+.d7__status img { width: 16px; height: 16px; }
+
 /* Правило пропуска */
 .rule { display: flex; align-items: flex-start; gap: 4px; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
 .rule img { flex: none; width: 20px; height: 20px; }
@@ -239,6 +248,7 @@ ul { list-style: none; }
 .btn:active { transform: scale(0.98); filter: brightness(0.92); }
 .btn--primary { background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet)); box-shadow: 0 8px 24px var(--accent-violet); }
 .btn:disabled { cursor: default; }
+.btn--no-glow { box-shadow: none; }
 .btn--secondary { background: var(--surface-chip); box-shadow: inset 0 0 0 1px var(--border-card); }
 .btn:focus-visible,
 .close-btn:focus-visible,

@@ -7,7 +7,8 @@
  *   поверх claimed — диалог Telegram «Разрешить писать», после «Напомнить» (112:1761);
  *   claimed с напоминанием — тост и вторичная кнопка, после «Разрешить» (112:1800);
  *   week — «11 · День 7 доступен», сразу после того как тост ушёл (153:2409);
- *   weekReveal — «12 · Неделя пройдена», раскрытие легендарного лутбокса (97:1166).
+ *   weekReveal — «12 · Неделя пройдена», раскрытие легендарного лутбокса (97:1166);
+ *   done — «13 · Неделя забрана целиком», после «Забрать награду» (120:1353).
  * Шапка Telegram и шторка рисуются один раз, внутри шторки меняется только содержимое.
  * Без сборки: обычный скрипт, открывается и по file://, и внутри Telegram.
  */
@@ -57,6 +58,8 @@
   });
   // Экран дня 7 (153:2409): шесть дней получены, легендарный лутбокс доступен
   var DAYS_WEEK = DAYS.map(function (d) { return Object.assign({}, d, { state: 'claimed' }); });
+  // Финал (120:1353): всё получено; у дня 2 в этом кадре малое свечение, как на экране «забрано»
+  var DAYS_DONE = DAYS_WEEK.map(function (d) { return d.day === 2 ? Object.assign({}, d, { glow: 'glow-common-sm.svg' }) : d; });
   var TIME_LEFT_MIN = 2 * 60 + 15; // «сгорит через 02:15»
   var REWARD = '120 монет';        // что выпало из обычного лутбокса (экран 97:1095)
   var DAYS_TO_LEGENDARY = 5;
@@ -117,28 +120,47 @@
   /* ---------- Экраны ---------- */
 
   // Сетка 3 × 2 и карточка дня 7 — общие для экрана бонуса и экрана «забрано»
-  // d7Today — день 7 доступен: золотая обводка, золотая подпись, лучи за артом
-  function daysGrid(days, d7Today) {
+  // Карточка дня 7 по состоянию: впереди (по умолчанию), 'today' — доступна (153:2409), 'claimed' — получена (120:1353)
+  function d7Card(state) {
+    if (state === 'claimed') {
+      return '' +
+        '<div class="d7 d7--claimed">' +
+          '<div class="d7__texts">' +
+            '<div><div class="d7__status"><img alt="" src="' + A + 'icon-check.svg">Получено</div><div class="d7__title">Легендарный лутбокс</div></div>' +
+            '<div class="d7__chips">' +
+              '<span class="chip">' + art('coin', 'glow-coin.svg') + '1' + NB + '000</span>' +
+              '<span class="chip chip--usdt">' + art('usdt', 'glow-usdt.svg') + '2,5' + NB + 'USDT</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="d7__art">' + art('legendaryOpen', 'glow-legendary.svg') + '</div>' +
+        '</div>';
+    }
+    var today = state === 'today';
+    return '' +
+      '<div class="d7' + (today ? ' d7--today' : '') + '">' +
+        '<div class="d7__texts">' +
+          '<div><div class="d7__label">Награда за' + NB + '7 дней подряд</div><div class="d7__title">Легендарный лутбокс</div></div>' +
+          '<div class="d7__chips">' +
+            '<span class="chip">' + art('coin', 'glow-coin.svg') + '1' + NB + '000</span>' +
+            '<span class="chip chip--usdt">' + art('usdt', 'glow-usdt.svg') + 'шанс до' + NB + '5' + NB + 'USDT</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="d7__art">' +
+          (today ? '<div class="d7__rays"><img alt="" src="' + A + 'rays-day7.svg"></div>' : '') +
+          '<div class="d7__art-glow"><img alt="" src="' + A + (today ? 'glow-day7-today.svg' : 'glow-day7.svg') + '"></div>' +
+          art('legendary', 'glow-legendary.svg') +
+        '</div>' +
+      '</div>';
+  }
+
+  function daysGrid(days, d7State) {
     var rows = [days.slice(0, 3), days.slice(3, 6)].map(function (r) {
       return '<ul class="days__row">' + r.map(dayCard).join('') + '</ul>';
     });
     return '' +
       '<div class="days">' + rows[0] +
         '<div class="days__lower">' + rows[1] +
-          '<div class="d7' + (d7Today ? ' d7--today' : '') + '">' +
-            '<div class="d7__texts">' +
-              '<div><div class="d7__label">Награда за' + NB + '7 дней подряд</div><div class="d7__title">Легендарный лутбокс</div></div>' +
-              '<div class="d7__chips">' +
-                '<span class="chip">' + art('coin', 'glow-coin.svg') + '1' + NB + '000</span>' +
-                '<span class="chip chip--usdt">' + art('usdt', 'glow-usdt.svg') + 'шанс до' + NB + '5' + NB + 'USDT</span>' +
-              '</div>' +
-            '</div>' +
-            '<div class="d7__art">' +
-              (d7Today ? '<div class="d7__rays"><img alt="" src="' + A + 'rays-day7.svg"></div>' : '') +
-              '<div class="d7__art-glow"><img alt="" src="' + A + (d7Today ? 'glow-day7-today.svg' : 'glow-day7.svg') + '"></div>' +
-              art('legendary', 'glow-legendary.svg') +
-            '</div>' +
-          '</div>' +
+          d7Card(d7State) +
         '</div>' +
       '</div>';
   }
@@ -212,7 +234,7 @@
       '<div class="sheet__content">' +
         head('Ежедневный бонус',
           '<p class="streak"><img alt="" src="' + A + 'icon-fire.svg">Забери день 7 и' + NB + 'неделя пройдена</p>') +
-        '<div class="days-block">' + daysGrid(DAYS_WEEK, true) + RULE + '</div>' +
+        '<div class="days-block">' + daysGrid(DAYS_WEEK, 'today') + RULE + '</div>' +
       '</div>' +
       '<div class="actions">' +
         '<button class="btn btn--primary" data-action="legendary">Забрать легендарный лутбокс</button>' +
@@ -252,7 +274,21 @@
       '</div>';
   }
 
-  var SCREENS = { bonus: bonusScreen, reveal: revealScreen, claimed: claimedScreen, week: weekScreen, weekReveal: weekRevealScreen };
+  // Финал: неделя забрана целиком (120:1353)
+  function doneScreen() {
+    return '' +
+      '<div class="sheet__content">' +
+        head('Ежедневный бонус',
+          '<p class="streak streak--done"><img alt="" src="' + A + 'icon-fire.svg">Неделя пройдена, серия 7 из' + NB + '7</p>') +
+        '<div class="days-block">' + daysGrid(DAYS_DONE, 'claimed') + '</div>' +
+      '</div>' +
+      '<div class="actions">' +
+        // в этом кадре у кнопки нет свечения
+        '<button class="btn btn--primary btn--no-glow" data-action="remind-week">Напомнить, когда начнётся неделя' + NB + '2</button>' +
+      '</div>';
+  }
+
+  var SCREENS = { bonus: bonusScreen, reveal: revealScreen, claimed: claimedScreen, week: weekScreen, weekReveal: weekRevealScreen, done: doneScreen };
 
   // Системный диалог Telegram: бот просит разрешения написать, когда откроется следующий день
   function writeAccessDialog() {
@@ -394,17 +430,18 @@
     if (!b) return;
     var act = b.getAttribute('data-action');
     if (inTelegram && tg.HapticFeedback) {
-      if (act === 'free' || act === 'legendary') tg.HapticFeedback.notificationOccurred('success');
+      if (act === 'free' || act === 'legendary' || act === 'week-claim') tg.HapticFeedback.notificationOccurred('success');
       else tg.HapticFeedback.impactOccurred('light');
     }
     if (act === 'free') go('reveal', { animate: true });
     else if (act === 'legendary') go('weekReveal', { animate: true });
+    else if (act === 'week-claim') go('done', { animate: true });
     // Награда уже на балансе — дальше экран «Сегодня забрано», к выбору награды не возвращаемся
     else if (act === 'done' || (act === 'close' && current === 'reveal')) go('claimed', { animate: true });
     else if (act === 'remind') openDialog();
     else if (act === 'dlg-allow') closeDialog(true);
     else if (act === 'dlg-cancel') closeDialog(false);
     else if ((act === 'tg-close' || act === 'close') && inTelegram) tg.close();
-    // «ad» и «week-claim» — следующие экраны подключим отдельным шагом.
+    // «ad» и «remind-week» — следующие экраны подключим отдельным шагом.
   });
 })();
