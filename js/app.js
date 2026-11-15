@@ -3,7 +3,8 @@
  * Экраны (Figma, файл CoevBlmheFoPU63iWHtwXw):
  *   bonus  — «2б · Мало времени», награда дня доступна (95:738);
  *   reveal — «3 · Открытие лутбокса», после «Обычный лутбокс бесплатно» (97:1095);
- *   claimed — «Напоминание · 1», награда дня забрана, после «Готово» (112:1734).
+ *   claimed — «Напоминание · 1», награда дня забрана, после «Готово» (112:1734);
+ *   поверх claimed — диалог Telegram «Разрешить писать», после «Напомнить» (112:1761).
  * Шапка Telegram и шторка рисуются один раз, внутри шторки меняется только содержимое.
  * Без сборки: обычный скрипт, открывается и по file://, и внутри Telegram.
  */
@@ -183,6 +184,23 @@
 
   var SCREENS = { bonus: bonusScreen, reveal: revealScreen, claimed: claimedScreen };
 
+  // Системный диалог Telegram: бот просит разрешения написать, когда откроется следующий день
+  function writeAccessDialog() {
+    return '' +
+      '<div class="overlay" id="overlay">' +
+        '<div class="tg-dialog" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-text">' +
+          '<div class="tg-dialog__text">' +
+            '<p class="tg-dialog__title" id="dlg-title">Разрешить Portal Games писать' + NB + 'вам?</p>' +
+            '<p class="tg-dialog__sub" id="dlg-text">Бот пришлёт сообщение, когда откроется день' + NB + (TODAY + 1) + '</p>' +
+          '</div>' +
+          '<div class="tg-dialog__buttons">' +
+            '<button class="tg-dialog__btn" data-action="dlg-cancel">Отмена</button>' +
+            '<button class="tg-dialog__btn tg-dialog__btn--main" data-action="dlg-allow">Разрешить</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
   /* ---------- Каркас и навигация ---------- */
 
   function shell() {
@@ -239,6 +257,24 @@
     }
   }
 
+  // Диалог лежит поверх экрана; всё под ним недоступно, пока он открыт
+  var focusBack = null;
+  function openDialog() {
+    if (document.getElementById('overlay')) return;
+    focusBack = document.activeElement;
+    root.insertAdjacentHTML('beforeend', writeAccessDialog());
+    Array.prototype.forEach.call(root.querySelectorAll('.tg-header, .sheet'), function (el) { el.setAttribute('inert', ''); });
+    root.querySelector('.tg-dialog__btn--main').focus({ preventScroll: true });
+  }
+  function closeDialog() {
+    var o = document.getElementById('overlay');
+    if (!o) return;
+    o.remove();
+    Array.prototype.forEach.call(root.querySelectorAll('[inert]'), function (el) { el.removeAttribute('inert'); });
+    if (focusBack && focusBack.focus) focusBack.focus({ preventScroll: true });
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDialog(); });
+
   go('bonus');
 
   // Живой таймер до смены дня — «сгорит через» на бонусе и «через» у дня 3 после получения.
@@ -272,7 +308,10 @@
     if (act === 'free') go('reveal', { animate: true });
     // Награда уже на балансе — дальше экран «Сегодня забрано», к выбору награды не возвращаемся
     else if (act === 'done' || (act === 'close' && current === 'reveal')) go('claimed', { animate: true });
+    else if (act === 'remind') openDialog();
+    // «Разрешить» и «Отмена» пока просто закрывают диалог — следующие экраны напоминания подключим отдельно
+    else if (act === 'dlg-allow' || act === 'dlg-cancel') closeDialog();
     else if ((act === 'tg-close' || act === 'close') && inTelegram) tg.close();
-    // «ad» и «remind» — экраны рекламы и напоминания подключим отдельным шагом.
+    // «ad» — экран рекламы подключим отдельным шагом.
   });
 })();

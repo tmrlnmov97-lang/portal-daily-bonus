@@ -223,9 +223,41 @@ ul { list-style: none; }
 .close-btn:focus-visible,
 .tg-header__btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
 
+/* ---------- Диалог Telegram «Разрешить писать» (Figma 112:1761) ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--overlay-scrim);
+  animation: screen-in 0.2s ease-out backwards;
+}
+.tg-dialog {
+  width: 270px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--telegram-popup);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: dialog-in 0.2s ease-out backwards;
+}
+.tg-dialog__text { display: flex; flex-direction: column; gap: 4px; padding: 20px 16px 16px; text-align: center; }
+.tg-dialog__title { font-size: var(--text-base); line-height: var(--leading-base); font-weight: 600; }
+.tg-dialog__sub { font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
+.tg-dialog__buttons { display: flex; border-top: 1px solid var(--telegram-separator); }
+.tg-dialog__btn { flex: 1 1 0; padding: 12px 0; font-size: var(--text-base); line-height: var(--leading-base); color: var(--telegram-link); }
+.tg-dialog__btn + .tg-dialog__btn { border-left: 1px solid var(--telegram-separator); }
+.tg-dialog__btn--main { font-weight: 600; }
+.tg-dialog__btn:active { background: var(--surface-chip); }
+.tg-dialog__btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
+@keyframes dialog-in { from { opacity: 0; transform: scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .tg-dialog { animation-name: screen-in; } }
+
 /* ---------- Трекинг по размерам (см. --tracking-* в tokens.css) ---------- */
-.tg-header__sub, .streak, .day__label, .day__unit, .day__status, .d7__label, .chip, .rule { letter-spacing: var(--tracking-sm); }
-.tg-header__status, .tg-header__name, .day__value { letter-spacing: var(--tracking-base); }
+.tg-header__sub, .streak, .day__label, .day__unit, .day__status, .d7__label, .chip, .rule, .tg-dialog__sub { letter-spacing: var(--tracking-sm); }
+.tg-header__status, .tg-header__name, .day__value, .tg-dialog__title, .tg-dialog__btn { letter-spacing: var(--tracking-base); }
 .btn { letter-spacing: var(--tracking-lg); }
 .d7__title { letter-spacing: var(--tracking-xl); }
 .sheet-head__title { letter-spacing: var(--tracking-2xl); }

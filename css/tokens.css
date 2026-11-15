@@ -9,6 +9,10 @@
   --bg-sheet-bottom: #0a0c30;
   --bg-glow: rgba(138, 61, 255, 0.4);
   --telegram-bg: #000000;
+  --telegram-popup: rgba(44, 44, 46, 0.96);
+  --telegram-separator: rgba(255, 255, 255, 0.12);
+  --telegram-link: #5aa9f0;
+  --overlay-scrim: rgba(0, 0, 0, 0.5);
 
   /* Поверхности и границы */
   --surface-card: rgba(255, 255, 255, 0.08);
