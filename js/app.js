@@ -389,11 +389,43 @@
     }
     // Системная кнопка «Назад» Telegram на экране награды
     if (inTelegram && tg.BackButton) { if (name === 'reveal') tg.BackButton.show(); else tg.BackButton.hide(); }
-    // Сильный вибро-отклик в момент открытия (80 % от 1,25 с анимации)
-    if (name === 'weekReveal' && opts && opts.animate) countWithdraw();
-    if ((name === 'reveal' || name === 'weekReveal') && opts && opts.animate && inTelegram && tg.HapticFeedback) {
-      setTimeout(function () { if (current === name) tg.HapticFeedback.impactOccurred('heavy'); }, 1000);
+    if ((name === 'reveal' || name === 'weekReveal') && opts && opts.animate) {
+      // Раскрытие стартует, когда арт ящиков готов (не дольше 1,2 с), иначе ящик появляется посреди тряски
+      screenEl.classList.add('is-waiting');
+      whenReady(screenEl.querySelectorAll('.reveal__art img'), 1200, function () {
+        if (current !== name) return;
+        screenEl.classList.remove('is-waiting');
+        if (name === 'weekReveal') countWithdraw();
+        // Сильный вибро-отклик в момент открытия (80 % от 1,25 с анимации)
+        if (inTelegram && tg.HapticFeedback) setTimeout(function () { if (current === name) tg.HapticFeedback.impactOccurred('heavy'); }, 1000);
+      });
     }
+  }
+
+  // Ждём загрузку и декодирование картинок, но не дольше limit мс
+  function whenReady(imgs, limit, cb) {
+    var done = false;
+    function fire() { if (!done) { done = true; cb(); } }
+    var list = Array.prototype.map.call(imgs, function (img) {
+      return img.decode ? img.decode().catch(function () {}) : Promise.resolve();
+    });
+    Promise.all(list).then(fire);
+    setTimeout(fire, limit);
+  }
+
+  // Пока смотрят на главную, подгружаем картинки всех следующих экранов: сначала шторка и раскрытие
+  var preloaded = [];
+  function preloadAll() {
+    var html = [bonusScreen, revealScreen, claimedScreen, weekScreen, weekRevealScreen, doneScreen]
+      .map(function (f) { return f(); }).join('') + '<img src="' + A + 'icon-check-20.svg">';
+    var seen = {};
+    html.replace(/src="([^"]+)"/g, function (_, src) {
+      if (seen[src]) return;
+      seen[src] = true;
+      var img = new Image();
+      img.src = src;
+      preloaded.push(img);
+    });
   }
 
   // «До вывода»: число досчитывает от прежнего значения до нового вместе с ростом полосы (CSS fill-grow, 1,6 с + 0,9 с)
@@ -454,8 +486,9 @@
   }
 
   go('home');
-  // Пока смотрят на главную, подгружаем картинки шторки, чтобы она выехала уже с артом
-  setTimeout(function () { document.createElement('div').innerHTML = bonusScreen(); }, 300);
+  // Картинки следующих экранов — после загрузки главной
+  if (document.readyState === 'complete') setTimeout(preloadAll, 100);
+  else window.addEventListener('load', function () { setTimeout(preloadAll, 100); });
 
   // Живой таймер до смены дня — «сгорит через» на бонусе и «через» у дня 3 после получения.
   // Опрос 4 раза в секунду, а текст меняется только при смене секунды — так секунды не перескакивают.

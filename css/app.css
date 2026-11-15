@@ -519,6 +519,9 @@ ul { list-style: none; }
  * перестаёт видеть тёмный фон шторки — кружок светлеет, замок теряется.
  */
 .sheet__screen.is-entering { animation: screen-in 0.22s ease-out backwards; }
+/* Раскрытие ждёт картинки: всё стоит на первом кадре */
+.sheet__screen.is-waiting,
+.sheet__screen.is-waiting * { animation-play-state: paused !important; }
 @keyframes screen-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
