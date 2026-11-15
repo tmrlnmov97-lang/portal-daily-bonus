@@ -137,7 +137,7 @@ ul { list-style: none; }
 .sheet__grabber { position: absolute; left: 50%; top: 8px; width: 36px; height: 4px; border-radius: 2px; background: var(--text-tertiary); transform: translateX(-50%); }
 
 /* Содержимое шторки меняется по экранам; кнопки прижаты к низу */
-.sheet__screen { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; /* минимальный зазор: на бонусе при 844 правило и кнопки сходятся до 4 */ }
+.sheet__screen { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; /* в макете между блоком и кнопками 24 */ }
 .sheet__content { position: relative; display: flex; flex-direction: column; gap: 20px; }
 
 /* Шапка окна */
@@ -153,6 +153,7 @@ ul { list-style: none; }
 
 /* Сетка дней */
 .days-block { display: flex; flex-direction: column; gap: 24px; }
+.sheet__screen--bonus .days-block { gap: 16px; } /* в 95:738 от сетки до правила 16, на экране дня 7 — 24 */
 .days { display: flex; flex-direction: column; gap: 8px; }
 .days__lower { display: flex; flex-direction: column; gap: 12px; }
 .days__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }

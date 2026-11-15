@@ -166,7 +166,7 @@
       '</div>';
   }
 
-  var RULE = '<p class="rule"><img alt="" src="' + A + 'icon-info.svg">Если пропустишь день, серию можно вернуть до' + NB + 'конца следующего дня</p>';
+  var RULE = '<p class="rule"><img alt="" src="' + A + 'icon-info-thin.svg">Пропустил день? Серию можно вернуть завтра</p>';
 
   function bonusScreen() {
     return '' +
