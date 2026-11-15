@@ -55,6 +55,8 @@
   var REWARD = '120 монет';        // что выпало из обычного лутбокса (экран 97:1095)
   var DAYS_TO_LEGENDARY = 5;
   var reminderOn = false;          // «Разрешить» в диалоге Telegram включает напоминание
+  var toastPending = false;        // тост показываем один раз, сразу после «Разрешить»
+  var TOAST_MS = 4000;             // через столько тост исчезает
 
   /* ---------- Кусочки разметки ---------- */
 
@@ -180,7 +182,7 @@
         '<div class="days-block">' + daysGrid(DAYS_AFTER) + '</div>' +
       '</div>' +
       '<div class="actions">' + (reminderOn
-        ? '<p class="toast" role="status"><img alt="" src="' + A + 'icon-check-20.svg">Напишем в' + NB + 'Telegram, когда откроется день' + NB + (TODAY + 1) + '</p>' +
+        ? (toastPending ? '<p class="toast" role="status"><img alt="" src="' + A + 'icon-check-20.svg">Напишем в' + NB + 'Telegram, когда откроется день' + NB + (TODAY + 1) + '</p>' : '') +
           '<button class="btn btn--secondary" disabled>Напомним, когда откроется день' + NB + (TODAY + 1) + '</button>'
         : '<button class="btn btn--primary" data-action="remind">Напомнить, когда откроется день' + NB + (TODAY + 1) + '</button>') +
       '</div>';
@@ -278,11 +280,25 @@
     if (allowed) {
       // Напоминание включено: тот же экран, но тост и вторичная кнопка (112:1800)
       reminderOn = true;
+      toastPending = true;
       go('claimed');
+      toastPending = false;
       document.getElementById('sheet-title').focus({ preventScroll: true });
+      hideToastLater();
     } else if (focusBack && focusBack.focus) focusBack.focus({ preventScroll: true });
   }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDialog(); });
+
+  // Тост уходит через TOAST_MS: короткая анимация исчезновения, потом убираем из разметки
+  function hideToastLater() {
+    var t = root.querySelector('.toast');
+    if (!t) return;
+    setTimeout(function () {
+      if (!t.isConnected) return;
+      t.classList.add('is-leaving');
+      setTimeout(function () { t.remove(); }, 300);
+    }, TOAST_MS);
+  }
 
   go('bonus');
 

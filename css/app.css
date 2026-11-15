@@ -274,11 +274,11 @@ ul { list-style: none; }
   left: 0;
   right: 0;
   bottom: calc(100% + 18px);
-  height: 29px;
+  height: 44px;               /* в макете 29 — увеличено по просьбе, отступы 12 из макета */
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 16px 0 12px;
+  padding: 12px 16px 12px 12px;
   border-radius: var(--radius-pill);
   background: var(--telegram-popup);
   -webkit-backdrop-filter: blur(12px);
@@ -290,7 +290,13 @@ ul { list-style: none; }
   animation: fade-up 0.25s ease-out backwards;
 }
 .toast img { flex: none; width: 20px; height: 20px; }
-@media (prefers-reduced-motion: reduce) { .tg-dialog, .toast { animation-name: screen-in; } }
+.toast.is-leaving { animation: toast-out 0.25s ease-in forwards; }
+@keyframes toast-out { to { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) {
+  .tg-dialog, .toast { animation-name: screen-in; }
+  .toast.is-leaving { animation-name: fade-out; }
+}
+@keyframes fade-out { to { opacity: 0; } }
 
 /* ---------- Трекинг по размерам (см. --tracking-* в tokens.css) ---------- */
 .tg-header__sub, .streak, .day__label, .day__unit, .day__status, .d7__label, .chip, .rule, .tg-dialog__sub, .toast { letter-spacing: var(--tracking-sm); }
