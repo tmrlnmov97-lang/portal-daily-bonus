@@ -320,6 +320,11 @@ ul { list-style: none; }
 .day--today .day__spark--big { animation: spark-twinkle 1.6s ease-in-out infinite; }
 .day--today .day__spark--small { animation: spark-twinkle 2s ease-in-out 0.6s infinite; }
 
+/* День 7 доступен — тот же язык, что у дня «сегодня»: лучи вращаются, свечение дышит, лутбокс покачивается и встряхивается */
+.d7--today .d7__rays img { animation: rays-spin 16s linear infinite; transform-origin: 50% 50%; }
+.d7--today .d7__art-glow { animation: halo-breathe 2.4s ease-in-out infinite; }
+.d7--today .d7__art > .art { animation: box-float 2.4s ease-in-out infinite, box-wiggle 3.6s ease-in-out infinite; transform-origin: 50% 75%; }
+
 @keyframes rays-spin { to { transform: rotate(360deg); } }
 @keyframes halo-breathe {
   0%, 100% { opacity: 0.55; transform: scale(0.88); }
@@ -350,8 +355,11 @@ ul { list-style: none; }
 /* «Уменьшение движения»: без сдвигов и поворотов, остаётся только мерцание свечения и искр */
 @media (prefers-reduced-motion: reduce) {
   .day--today .day__rays img,
-  .day--today .day__art { animation: none; }
-  .day--today .day__halo { animation: fade-pulse 2.4s ease-in-out infinite; }
+  .day--today .day__art,
+  .d7--today .d7__rays img,
+  .d7--today .d7__art > .art { animation: none; }
+  .day--today .day__halo,
+  .d7--today .d7__art-glow { animation: fade-pulse 2.4s ease-in-out infinite; }
   .day--today .day__spark--big { animation: fade-pulse 1.6s ease-in-out infinite; }
   .day--today .day__spark--small { animation: fade-pulse 2s ease-in-out 0.6s infinite; }
 }
