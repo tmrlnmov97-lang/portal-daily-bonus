@@ -127,7 +127,7 @@ ul { list-style: none; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px 16px max(32px, env(safe-area-inset-bottom));
+  padding: 24px 16px max(32px, env(safe-area-inset-bottom)); /* сверху 24: внешний отступ не меньше внутренних 24 */
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   background: linear-gradient(180deg, var(--bg-sheet-top) 0%, var(--bg-sheet-bottom) 32%, var(--bg-sheet-bottom) 100%);
   overflow: hidden;
@@ -137,7 +137,7 @@ ul { list-style: none; }
 .sheet__grabber { position: absolute; left: 50%; top: 8px; width: 36px; height: 4px; border-radius: 2px; background: var(--text-tertiary); transform: translateX(-50%); }
 
 /* Содержимое шторки меняется по экранам; кнопки прижаты к низу */
-.sheet__screen { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; /* минимальный зазор; в макете 10 px */ }
+.sheet__screen { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; /* минимальный зазор: на бонусе при 844 правило и кнопки сходятся до 4 */ }
 .sheet__content { position: relative; display: flex; flex-direction: column; gap: 20px; }
 
 /* Шапка окна */
@@ -491,9 +491,9 @@ ul { list-style: none; }
 /* В макете содержимое 598, под ним 24 до кнопки и 42 до низа: при 844 центр ровно 368, на высоких экранах растёт он */
 .sheet__screen--weekReveal { gap: 24px; }
 .sheet__screen--weekReveal .actions { margin-bottom: 10px; }
-.sheet__content--week { flex: 1; gap: 40px; }
-.week { flex: 1; display: flex; flex-direction: column; }
-.week__center { flex: 1 1 368px; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+.sheet__content--week { flex: 1; min-height: 0; gap: 40px; }
+.week { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.week__center { flex: 1 1 0px; min-height: 300px; display: flex; align-items: center; justify-content: center; } /* заполняет остаток: при 844 — 364 */
 /* Закрытый легендарный — как на карточке дня 7 (отражён обратно); корпус на картинке шире (137 против 114) — масштаб 0,83, дно совмещено */
 .reveal--legendary .reveal__closed { scale: -0.83 0.83; translate: 0 17px; }
 .reveal__sum--usdt span { color: var(--accent-green); }
