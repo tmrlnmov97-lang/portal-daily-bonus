@@ -1,6 +1,7 @@
 /*
  * Ежедневный бонус Portal Games.
  * Экраны (Figma, файл CoevBlmheFoPU63iWHtwXw):
+ *   home   — «01 · Вход: награда доступна», главная продукта с плашкой бонуса (142:1591), стартовый;
  *   bonus  — «2б · Мало времени», награда дня доступна (95:738);
  *   reveal — «3 · Открытие лутбокса», после «Обычный лутбокс бесплатно» (97:1095);
  *   claimed — «Напоминание · 1», награда дня забрана, после «Готово» (112:1734);
@@ -308,8 +309,24 @@
 
   /* ---------- Каркас и навигация ---------- */
 
+  // Главная (142:1591): скриншот продукта — шапка, лента и таб-бар, — между шапкой и лентой плашка «Ежедневный бонус»
+  function homeView() {
+    var shot = '<img alt="" src="' + A + 'home-screen.webp">';
+    return '' +
+      '<div class="home__shot home__shot--top" aria-hidden="true">' + shot + '</div>' +
+      '<div class="banner" data-action="open-bonus">' +
+        '<div class="banner__glow" aria-hidden="true"><img alt="" src="' + A + 'glow-banner.svg"></div>' +
+        art('common', 'glow-common.svg', 'banner__art') +
+        '<div class="banner__texts"><p class="banner__title">Ежедневный бонус</p><p class="banner__sub">Забери день ' + TODAY + '</p></div>' +
+        '<button class="banner__btn" data-action="open-bonus" aria-label="Забрать ежедневный бонус, день ' + TODAY + '">Забрать</button>' +
+      '</div>' +
+      '<div class="home__shot home__shot--content" aria-hidden="true">' + shot + '</div>' +
+      '<div class="home__shot home__shot--tabbar" aria-hidden="true">' + shot + '</div>';
+  }
+
   function shell() {
     return '' +
+      '<div class="home" id="home">' + homeView() + '</div>' +
       '<header class="tg-header" aria-hidden="true">' +
         '<div class="tg-header__status">9:41</div>' +
         '<div class="tg-header__nav">' +
@@ -348,9 +365,22 @@
 
   function go(name, opts) {
     current = name;
+    root.classList.toggle('is-home', name === 'home');
+    if (name === 'home') {
+      screenEl.innerHTML = '';
+      if (inTelegram && tg.BackButton) tg.BackButton.hide();
+      return;
+    }
+    // С главной шторка бонуса выезжает снизу
+    if (opts && opts.fromHome) {
+      var sheet = root.querySelector('.sheet');
+      sheet.classList.remove('is-opening');
+      void sheet.offsetWidth;
+      sheet.classList.add('is-opening');
+    }
     screenEl.className = 'sheet__screen sheet__screen--' + name + (opts && opts.animate ? ' is-entering' : '');
     screenEl.innerHTML = SCREENS[name]();
-    if (opts && opts.animate) {
+    if (opts && (opts.animate || opts.fromHome)) {
       var title = document.getElementById('sheet-title');
       if (title) title.focus({ preventScroll: true });
     }
@@ -402,7 +432,9 @@
     }, TOAST_MS);
   }
 
-  go('bonus');
+  go('home');
+  // Пока смотрят на главную, подгружаем картинки шторки, чтобы она выехала уже с артом
+  setTimeout(function () { document.createElement('div').innerHTML = bonusScreen(); }, 300);
 
   // Живой таймер до смены дня — «сгорит через» на бонусе и «через» у дня 3 после получения.
   // Опрос 4 раза в секунду, а текст меняется только при смене секунды — так секунды не перескакивают.
@@ -432,7 +464,8 @@
       if (act === 'free' || act === 'legendary' || act === 'week-claim') tg.HapticFeedback.notificationOccurred('success');
       else tg.HapticFeedback.impactOccurred('light');
     }
-    if (act === 'free') go('reveal', { animate: true });
+    if (act === 'open-bonus') go('bonus', { fromHome: true });
+    else if (act === 'free') go('reveal', { animate: true });
     else if (act === 'legendary') go('weekReveal', { animate: true });
     else if (act === 'week-claim') go('done', { animate: true });
     // Награда уже на балансе — дальше экран «Сегодня забрано», к выбору награды не возвращаемся
