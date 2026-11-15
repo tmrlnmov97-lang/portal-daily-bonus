@@ -48,7 +48,7 @@ ul { list-style: none; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px 16px max(34px, env(safe-area-inset-bottom));
+  padding: 20px 16px max(32px, env(safe-area-inset-bottom));
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   background: linear-gradient(180deg, var(--bg-sheet-top) 0%, var(--bg-sheet-bottom) 32%, var(--bg-sheet-bottom) 100%);
   overflow: hidden;
@@ -93,7 +93,7 @@ ul { list-style: none; }
   align-items: center;
   gap: 4px;
   min-width: 0;
-  padding: 8px;
+  padding: 10px;  /* card/day/padding */
   border-radius: var(--radius-card);
   background: var(--surface-card);
   box-shadow: inset 0 0 0 1px var(--border-card);
@@ -176,14 +176,27 @@ ul { list-style: none; }
 
 /* ---------- Карточка дня 7 ---------- */
 .d7 {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
   border-radius: var(--radius-wide);
   background: var(--surface-card);
-  box-shadow: inset 0 0 0 1px var(--border-card);
   overflow: hidden;
+}
+/* Обводка-градиент слева направо: обычная белая → золотая (как у легендарного лутбокса) */
+.d7::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--border-card), var(--accent-gold-border));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 .d7__texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .d7__label { font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; color: var(--text-tertiary); }
@@ -217,7 +230,8 @@ ul { list-style: none; }
   transition: transform 0.12s ease, filter 0.12s ease;
 }
 .btn:active { transform: scale(0.98); filter: brightness(0.92); }
-.btn--primary { background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet)); box-shadow: 0 8px 24px rgba(138, 61, 255, 0.4); }
+.btn--primary { background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet)); box-shadow: 0 8px 24px var(--accent-violet); }
+.btn:disabled { cursor: default; }
 .btn--secondary { background: var(--surface-chip); box-shadow: inset 0 0 0 1px var(--border-card); }
 .btn:focus-visible,
 .close-btn:focus-visible,
@@ -253,10 +267,33 @@ ul { list-style: none; }
 .tg-dialog__btn:active { background: var(--surface-chip); }
 .tg-dialog__btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
 @keyframes dialog-in { from { opacity: 0; transform: scale(1.1); } }
-@media (prefers-reduced-motion: reduce) { .tg-dialog { animation-name: screen-in; } }
+
+/* ---------- Тост «Напишем в Telegram» над кнопкой (Figma 112:1800) ---------- */
+.toast {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 18px);
+  height: 29px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--telegram-popup);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  white-space: nowrap;
+  animation: fade-up 0.25s ease-out backwards;
+}
+.toast img { flex: none; width: 20px; height: 20px; }
+@media (prefers-reduced-motion: reduce) { .tg-dialog, .toast { animation-name: screen-in; } }
 
 /* ---------- Трекинг по размерам (см. --tracking-* в tokens.css) ---------- */
-.tg-header__sub, .streak, .day__label, .day__unit, .day__status, .d7__label, .chip, .rule, .tg-dialog__sub { letter-spacing: var(--tracking-sm); }
+.tg-header__sub, .streak, .day__label, .day__unit, .day__status, .d7__label, .chip, .rule, .tg-dialog__sub, .toast { letter-spacing: var(--tracking-sm); }
 .tg-header__status, .tg-header__name, .day__value, .tg-dialog__title, .tg-dialog__btn { letter-spacing: var(--tracking-base); }
 .btn { letter-spacing: var(--tracking-lg); }
 .d7__title { letter-spacing: var(--tracking-xl); }

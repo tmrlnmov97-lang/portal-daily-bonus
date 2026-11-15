@@ -4,7 +4,8 @@
  *   bonus  — «2б · Мало времени», награда дня доступна (95:738);
  *   reveal — «3 · Открытие лутбокса», после «Обычный лутбокс бесплатно» (97:1095);
  *   claimed — «Напоминание · 1», награда дня забрана, после «Готово» (112:1734);
- *   поверх claimed — диалог Telegram «Разрешить писать», после «Напомнить» (112:1761).
+ *   поверх claimed — диалог Telegram «Разрешить писать», после «Напомнить» (112:1761);
+ *   claimed с напоминанием — тост и вторичная кнопка, после «Разрешить» (112:1800).
  * Шапка Telegram и шторка рисуются один раз, внутри шторки меняется только содержимое.
  * Без сборки: обычный скрипт, открывается и по file://, и внутри Telegram.
  */
@@ -53,6 +54,7 @@
   var TIME_LEFT_MIN = 2 * 60 + 15; // «сгорит через 02:15»
   var REWARD = '120 монет';        // что выпало из обычного лутбокса (экран 97:1095)
   var DAYS_TO_LEGENDARY = 5;
+  var reminderOn = false;          // «Разрешить» в диалоге Telegram включает напоминание
 
   /* ---------- Кусочки разметки ---------- */
 
@@ -177,8 +179,10 @@
           '<p class="streak streak--done"><img alt="" src="' + A + 'icon-fire.svg">Сегодня забрано, серия ' + TODAY + ' из' + NB + '7</p>') +
         '<div class="days-block">' + daysGrid(DAYS_AFTER) + '</div>' +
       '</div>' +
-      '<div class="actions">' +
-        '<button class="btn btn--primary" data-action="remind">Напомнить, когда откроется день' + NB + (TODAY + 1) + '</button>' +
+      '<div class="actions">' + (reminderOn
+        ? '<p class="toast" role="status"><img alt="" src="' + A + 'icon-check-20.svg">Напишем в' + NB + 'Telegram, когда откроется день' + NB + (TODAY + 1) + '</p>' +
+          '<button class="btn btn--secondary" disabled>Напомним, когда откроется день' + NB + (TODAY + 1) + '</button>'
+        : '<button class="btn btn--primary" data-action="remind">Напомнить, когда откроется день' + NB + (TODAY + 1) + '</button>') +
       '</div>';
   }
 
@@ -266,12 +270,17 @@
     Array.prototype.forEach.call(root.querySelectorAll('.tg-header, .sheet'), function (el) { el.setAttribute('inert', ''); });
     root.querySelector('.tg-dialog__btn--main').focus({ preventScroll: true });
   }
-  function closeDialog() {
+  function closeDialog(allowed) {
     var o = document.getElementById('overlay');
     if (!o) return;
     o.remove();
     Array.prototype.forEach.call(root.querySelectorAll('[inert]'), function (el) { el.removeAttribute('inert'); });
-    if (focusBack && focusBack.focus) focusBack.focus({ preventScroll: true });
+    if (allowed) {
+      // Напоминание включено: тот же экран, но тост и вторичная кнопка (112:1800)
+      reminderOn = true;
+      go('claimed');
+      document.getElementById('sheet-title').focus({ preventScroll: true });
+    } else if (focusBack && focusBack.focus) focusBack.focus({ preventScroll: true });
   }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDialog(); });
 
@@ -309,8 +318,8 @@
     // Награда уже на балансе — дальше экран «Сегодня забрано», к выбору награды не возвращаемся
     else if (act === 'done' || (act === 'close' && current === 'reveal')) go('claimed', { animate: true });
     else if (act === 'remind') openDialog();
-    // «Разрешить» и «Отмена» пока просто закрывают диалог — следующие экраны напоминания подключим отдельно
-    else if (act === 'dlg-allow' || act === 'dlg-cancel') closeDialog();
+    else if (act === 'dlg-allow') closeDialog(true);
+    else if (act === 'dlg-cancel') closeDialog(false);
     else if ((act === 'tg-close' || act === 'close') && inTelegram) tg.close();
     // «ad» — экран рекламы подключим отдельным шагом.
   });
