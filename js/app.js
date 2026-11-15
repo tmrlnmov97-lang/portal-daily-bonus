@@ -283,8 +283,7 @@
         '<div class="days-block">' + daysGrid(DAYS_DONE, 'claimed') + '</div>' +
       '</div>' +
       '<div class="actions">' +
-        // в этом кадре у кнопки нет свечения
-        '<button class="btn btn--primary btn--no-glow" data-action="remind-week">Напомнить, когда начнётся неделя' + NB + '2</button>' +
+        '<button class="btn btn--primary" data-action="remind-week">Напомнить, когда начнётся неделя' + NB + '2</button>' +
       '</div>';
   }
 

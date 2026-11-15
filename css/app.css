@@ -246,9 +246,8 @@ ul { list-style: none; }
   transition: transform 0.12s ease, filter 0.12s ease;
 }
 .btn:active { transform: scale(0.98); filter: brightness(0.92); }
-.btn--primary { background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet)); box-shadow: 0 8px 24px var(--accent-violet); }
+.btn--primary { background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet)); } /* без свечения — по просьбе, как на финальном экране */
 .btn:disabled { cursor: default; }
-.btn--no-glow { box-shadow: none; }
 .btn--secondary { background: var(--surface-chip); box-shadow: inset 0 0 0 1px var(--border-card); }
 .btn:focus-visible,
 .close-btn:focus-visible,
