@@ -1,0 +1,226 @@
+/* Экран «Ежедневный бонус · мало времени» (Figma 95:738). Мобайл 390 px, сетка 4. */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button { font: inherit; color: inherit; border: 0; background: none; padding: 0; cursor: pointer; }
+img { display: block; }
+h1, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 430px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--bg-app);
+  overflow: hidden;
+}
+
+/* ---------- Шапка Telegram (только в браузере; внутри Telegram её рисует сам клиент) ---------- */
+.tg-header { flex: none; height: 104px; background: var(--telegram-bg); display: flex; flex-direction: column; }
+.in-telegram .tg-header { display: none; }
+.tg-header__status { height: 48px; padding: 16px 32px 0; font-size: var(--text-base); line-height: var(--leading-base); font-weight: 600; }
+.tg-header__nav { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+.tg-header__btn { width: 40px; height: 40px; border-radius: 20px; background: var(--surface-chip); display: grid; place-items: center; }
+.tg-header__btn img { width: 20px; height: 20px; }
+.tg-header__title { display: flex; flex-direction: column; align-items: center; }
+.tg-header__name { font-size: var(--text-base); line-height: var(--leading-base); font-weight: 600; }
+.tg-header__sub { font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
+
+/* ---------- Окно серии ---------- */
+.sheet {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px; /* минимальный зазор; в макете между контентом и кнопками 10 px */
+  padding: 20px 16px max(34px, env(safe-area-inset-bottom));
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: linear-gradient(180deg, var(--bg-sheet-top) 0%, var(--bg-sheet-bottom) 32%, var(--bg-sheet-bottom) 100%);
+  overflow: hidden;
+}
+.sheet__glow { position: absolute; left: 50%; top: -80px; width: 320px; height: 160px; transform: translateX(-50%); pointer-events: none; }
+.sheet__glow img { position: absolute; inset: -50% -25%; width: 150%; height: 200%; }
+.sheet__grabber { position: absolute; left: 50%; top: 8px; width: 36px; height: 4px; border-radius: 2px; background: var(--text-tertiary); transform: translateX(-50%); }
+
+.sheet__content { position: relative; display: flex; flex-direction: column; gap: 20px; }
+
+/* Шапка окна */
+.sheet-head { display: flex; flex-direction: column; } /* 32 + 20 = 52, как в макете */
+.sheet-head__row { display: flex; align-items: center; gap: 8px; }
+.sheet-head__title { flex: 1; margin: 0; font-size: var(--text-2xl); line-height: var(--leading-2xl); font-weight: 700; }
+.close-btn { width: 32px; height: 32px; border-radius: 16px; background: var(--surface-chip); display: grid; place-items: center; }
+.close-btn img { width: 16px; height: 16px; }
+.streak { display: flex; align-items: center; gap: 4px; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
+.streak img { width: 16px; height: 16px; }
+.streak__time { font-weight: 600; color: var(--accent-orange); }
+
+/* Сетка дней */
+.days-block { display: flex; flex-direction: column; gap: 24px; }
+.days { display: flex; flex-direction: column; gap: 8px; }
+.days__lower { display: flex; flex-direction: column; gap: 12px; }
+.days__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+/* ---------- Арт награды: картинка обрезана рамкой, свечение под ней ---------- */
+.art { position: relative; flex: none; }
+.art__glow { position: absolute; inset: 15.63%; pointer-events: none; }
+.art__glow img { position: absolute; width: auto; height: auto; max-width: none; }
+.art__clip { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.art__clip img { position: absolute; max-width: none; }
+
+/* ---------- Карточка дня ---------- */
+.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px;
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  box-shadow: inset 0 0 0 1px var(--border-card);
+  overflow: hidden;
+}
+.day__top { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; }
+.day__label { height: 20px; font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; color: var(--text-tertiary); text-align: center; white-space: nowrap; }
+.day__art { width: 56px; height: 56px; }
+.day__reward { display: flex; flex-direction: column; align-items: center; width: 100%; text-align: center; }
+.day__value { width: 100%; font-size: var(--text-base); line-height: var(--leading-base); font-weight: 700; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.day__unit { width: 100%; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Получено: тише фон, приглушён только арт */
+.day--claimed { background: var(--surface-card-done); box-shadow: none; }
+.day--claimed .day__art { opacity: 0.4; }
+.day--claimed .day__value { color: var(--text-tertiary); }
+.day__status { display: flex; align-items: center; justify-content: center; gap: 4px; height: 20px; font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; color: var(--accent-green); }
+.day__status img { width: 16px; height: 16px; }
+
+/* Впереди: арт на 50%, замок поверх */
+.day--locked .day__art { opacity: 0.5; }
+.day__lock {
+  position: absolute;
+  left: 50%;
+  top: 44px;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-card);
+  box-shadow: inset 0 0 0 1px var(--border-card);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.day__lock img { width: 16px; height: 16px; }
+
+/* Сегодня: обводка-градиент, свечение, лучи, искры */
+.day--today { background: var(--accent-blue-soft); box-shadow: 0 4px 20px var(--accent-violet-glow); overflow: hidden; }
+.day--today::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-claim-start), var(--accent-claim-mid), var(--accent-claim-end));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.day--today .day__label { color: var(--text-primary); }
+.day--today .day__value { color: var(--text-primary); }
+.day--today .day__unit { color: var(--text-secondary); }
+/* Координаты — из Figma относительно внешнего края карточки (обводка внутри, на раскладку не влияет) */
+.day__halo { position: absolute; left: 13px; top: 16px; width: 88px; height: 88px; pointer-events: none; }
+.day__halo img { position: absolute; left: -31.82%; top: -31.82%; width: 163.64%; height: 163.64%; }
+.day__rays {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 175.71px;
+  height: 159.89px;
+  transform-origin: 0 0;
+  transform: matrix(0.99192, -0.12689, 0.15259, 0.98829, -42, -13.616); /* relativeTransform слоя «Лучи» */
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.day__rays img { width: 100%; height: 100%; }
+.day__spark { position: absolute; pointer-events: none; }
+.day__spark--big { left: 86px; top: 30px; width: 10px; height: 10px; }
+.day__spark--small { left: 24px; top: 78px; width: 6px; height: 6px; }
+.day--today > .day__top,
+.day--today > .day__reward { position: relative; }
+
+/* ---------- Карточка дня 7 ---------- */
+.d7 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-wide);
+  background: var(--surface-card);
+  box-shadow: inset 0 0 0 1px var(--border-card);
+  overflow: hidden;
+}
+.d7__texts { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.d7__label { font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; color: var(--text-tertiary); }
+.d7__title { font-size: var(--text-xl); line-height: var(--leading-xl); font-weight: 500; }
+.d7__chips { display: flex; gap: 8px; padding-top: 8px; }
+.chip { display: flex; align-items: center; gap: 4px; padding: 4px 8px 4px 4px; border-radius: 14px; background: var(--surface-chip); font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; white-space: nowrap; }
+.chip .art { width: 20px; height: 20px; }
+.chip--usdt { background: var(--accent-green-soft); box-shadow: inset 0 0 0 1px var(--accent-green-border); color: var(--accent-green); }
+.d7__art { position: relative; flex: none; width: 80px; height: 80px; }
+.d7__art-glow { position: absolute; left: -12px; top: -12px; width: 104px; height: 104px; pointer-events: none; }
+.d7__art-glow img { position: absolute; inset: -30.77%; width: 161.54%; height: 161.54%; }
+.d7__art .art { position: absolute; inset: 0; width: 80px; height: 80px; }
+
+/* Правило пропуска */
+.rule { display: flex; align-items: flex-start; gap: 4px; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
+.rule img { flex: none; width: 20px; height: 20px; }
+
+/* ---------- Кнопки ---------- */
+.actions { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.btn {
+  height: 56px;
+  width: 100%;
+  border-radius: var(--radius-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn:active { transform: scale(0.98); filter: brightness(0.92); }
+.btn--primary { background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet)); box-shadow: 0 8px 24px rgba(138, 61, 255, 0.4); }
+.btn--secondary { background: var(--surface-chip); box-shadow: inset 0 0 0 1px var(--border-card); }
+.btn:focus-visible,
+.close-btn:focus-visible,
+.tg-header__btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+
+/* ---------- Трекинг по размерам (см. --tracking-* в tokens.css) ---------- */
+.tg-header__sub, .streak, .day__label, .day__unit, .day__status, .d7__label, .chip, .rule { letter-spacing: var(--tracking-sm); }
+.tg-header__status, .tg-header__name, .day__value { letter-spacing: var(--tracking-base); }
+.btn { letter-spacing: var(--tracking-lg); }
+.d7__title { letter-spacing: var(--tracking-xl); }
+.sheet-head__title { letter-spacing: var(--tracking-2xl); }

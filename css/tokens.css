@@ -1,0 +1,71 @@
+/*
+ * Токены из Figma, коллекция «Portal UI» (режим «Призы»).
+ * Файл CoevBlmheFoPU63iWHtwXw. Названия повторяют переменные: bg/app → --bg-app.
+ */
+:root {
+  /* Фон */
+  --bg-app: #0b0f1a;
+  --bg-sheet-top: #3a1670;
+  --bg-sheet-bottom: #0a0c30;
+  --bg-glow: rgba(138, 61, 255, 0.4);
+  --telegram-bg: #000000;
+
+  /* Поверхности и границы */
+  --surface-card: rgba(255, 255, 255, 0.08);
+  --surface-card-done: rgba(255, 255, 255, 0.04);
+  --surface-chip: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.14);
+
+  /* Текст */
+  --text-primary: #ffffff;
+  --text-secondary: #b4afd6;
+  --text-tertiary: #a6a1cf;
+
+  /* Акценты */
+  --accent-blue: #3d8bff;
+  --accent-violet: #8a3dff;
+  --accent-blue-soft: rgba(30, 44, 143, 0.55);
+  --accent-violet-glow: rgba(138, 61, 255, 0.32);
+  --accent-claim-start: #3d8bff;
+  --accent-claim-mid: #6364ff;
+  --accent-claim-end: #8a3dff;
+  --accent-orange: #ff9f43;
+  --accent-green: #33d17a;
+  --accent-green-soft: rgba(51, 209, 122, 0.14);
+  --accent-green-border: rgba(51, 209, 122, 0.24);
+
+  /* Типографика: шкала Tailwind (размер / межстрочный) */
+  --font: "SF Pro Rounded", ui-rounded, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --text-sm: 14px;   --leading-sm: 20px;
+  --text-base: 16px; --leading-base: 24px;
+  --text-lg: 18px;   --leading-lg: 28px;
+  --text-xl: 20px;   --leading-xl: 28px;
+  --text-2xl: 24px;  --leading-2xl: 32px;
+
+  /* Трекинг: по умолчанию 0, как в Figma */
+  --tracking-sm: 0px;
+  --tracking-base: 0px;
+  --tracking-lg: 0px;
+  --tracking-xl: 0px;
+  --tracking-2xl: 0px;
+
+  /* Скругления */
+  --radius-card: 16px;
+  --radius-wide: 20px;
+  --radius-sheet: 24px;
+  --radius-button: 28px;
+  --radius-pill: 999px;
+}
+
+/*
+ * На Mac и iOS система сама добавляет к SF Pro трекинг из шрифта (таблица trak),
+ * Figma его не применяет — строки в браузере выходят на 2–6 % шире макета.
+ * Класс ставит js/app.js, только если текст реально набран SF; значения сняты замером под макет.
+ */
+:root.sf-tracking {
+  --tracking-sm: -0.44px;
+  --tracking-base: -0.36px;
+  --tracking-lg: -0.34px;
+  --tracking-xl: -0.35px;
+  --tracking-2xl: -0.33px;
+}
