@@ -95,9 +95,11 @@
       '</div>' + subtitleHtml + '</div>';
   }
 
+  // Ч:ММ:СС — с секундами, чтобы отсчёт было видно сразу; без ведущего нуля, иначе не влезает в карточку дня
   function fmt(min) {
-    var m = Math.max(0, Math.floor(min));
-    return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+    var s = Math.max(0, Math.floor(min * 60));
+    function p(n) { return String(n).padStart(2, '0'); }
+    return Math.floor(s / 3600) + ':' + p(Math.floor(s / 60) % 60) + ':' + p(s % 60);
   }
 
   /* ---------- Экраны ---------- */
@@ -239,13 +241,14 @@
 
   go('bonus');
 
-  // Живой таймер: считает минуты до смены дня — «сгорит через» на бонусе и «через» у дня 3 после получения.
+  // Живой таймер до смены дня — «сгорит через» на бонусе и «через» у дня 3 после получения.
+  // Опрос 4 раза в секунду, а текст меняется только при смене секунды — так секунды не перескакивают.
   setInterval(function () {
     var t = fmt(minutesLeft());
     Array.prototype.forEach.call(document.querySelectorAll('.js-timer'), function (el) {
       if (el.textContent !== t) el.textContent = t;
     });
-  }, 1000);
+  }, 250);
 
   // Telegram: внутри клиента прячем нарисованную шапку, разворачиваем окно, даём вибро-отклик на кнопки.
   if (inTelegram) {

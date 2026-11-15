@@ -115,7 +115,7 @@ ul { list-style: none; }
 
 /* Следующий (112:1734): «через» и время до открытия, арт целиком, без замка */
 .day__status--next { font-weight: 400; color: var(--text-secondary); white-space: nowrap; }
-.day__time { font-weight: 600; color: var(--text-primary); }
+.day__time { font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; } /* цифры одной ширины — строка по центру не дёргается каждую секунду */
 
 /* Впереди: арт на 50%, замок поверх */
 .day--locked .day__art { opacity: 0.5; }
@@ -310,7 +310,11 @@ ul { list-style: none; }
 .reveal__note { font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-tertiary); letter-spacing: var(--tracking-sm); }
 
 /* ---------- Переходы между экранами ---------- */
-.sheet__screen.is-entering { animation: screen-in 0.22s ease-out both; }
+/*
+ * Без «both»: заполненная анимация прозрачности оставляет экран отдельным слоем, и размытие под замком
+ * перестаёт видеть тёмный фон шторки — кружок светлеет, замок теряется.
+ */
+.sheet__screen.is-entering { animation: screen-in 0.22s ease-out backwards; }
 @keyframes screen-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
