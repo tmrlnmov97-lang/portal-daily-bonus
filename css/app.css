@@ -210,6 +210,13 @@ ul { list-style: none; }
 .d7__art-glow img { position: absolute; inset: -30.77%; width: 161.54%; height: 161.54%; }
 .d7__art .art { position: absolute; inset: 0; width: 80px; height: 80px; }
 
+/* День 7 доступен (153:2409): золотая обводка 2 px, золотой отсвет справа, золотая подпись, лучи за артом */
+.d7--today { background: linear-gradient(270deg, var(--accent-gold-glow) 0%, var(--accent-gold-clear) 70%), var(--surface-card); }
+.d7--today::after { padding: 2px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-border)); }
+.d7--today .d7__label { color: var(--accent-gold); }
+.d7__rays { position: absolute; left: -60px; top: -60px; width: 200px; height: 200px; mix-blend-mode: screen; pointer-events: none; }
+.d7__rays img { width: 100%; height: 100%; }
+
 /* Правило пропуска */
 .rule { display: flex; align-items: flex-start; gap: 4px; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
 .rule img { flex: none; width: 20px; height: 20px; }

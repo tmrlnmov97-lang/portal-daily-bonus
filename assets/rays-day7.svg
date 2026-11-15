@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#208;&#155;&#209;&#131;&#209;&#135;&#208;&#184;" opacity="0.3" style="mix-blend-mode:screen">
+<path d="M100 100H200L199.42 110.78L100 100ZM100 100L192.39 138.27L187.73 148L100 100ZM100 100L170.71 170.71L162.68 177.92L100 100ZM100 100L138.27 192.39L128.09 195.97L100 100ZM100 100V200L89.22 199.42L100 100ZM100 100L61.73 192.39L52 187.73L100 100ZM100 100L29.29 170.71L22.08 162.68L100 100ZM100 100L7.61 138.27L4.03 128.09L100 100ZM100 100H0L0.58 89.22L100 100ZM100 100L7.61 61.73L12.27 52L100 100ZM100 100L29.29 29.29L37.32 22.08L100 100ZM100 100L61.73 7.61L71.91 4.03L100 100ZM100 100V0L110.78 0.58L100 100ZM100 100L138.27 7.61L148 12.27L100 100ZM100 100L170.71 29.29L177.92 37.32L100 100ZM100 100L192.39 61.73L195.97 71.91L100 100Z" fill="url(#paint0_radial_0_148)"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_148" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) scale(100)">
+<stop stop-color="#FFC245"/>
+<stop offset="0.35" stop-color="#FFC245"/>
+<stop offset="1" stop-color="#FFC245" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

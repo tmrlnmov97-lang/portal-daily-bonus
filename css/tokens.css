@@ -37,7 +37,10 @@
   --accent-green: #33d17a;
   --accent-green-soft: rgba(51, 209, 122, 0.14);
   --accent-green-border: rgba(51, 209, 122, 0.24);
+  --accent-gold: #ffc245;
   --accent-gold-border: rgba(255, 194, 69, 0.32);
+  --accent-gold-glow: rgba(255, 194, 69, 0.28);
+  --accent-gold-clear: rgba(255, 194, 69, 0);
 
   /* Типографика: шкала Tailwind (размер / межстрочный) */
   --font: "SF Pro Rounded", ui-rounded, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
