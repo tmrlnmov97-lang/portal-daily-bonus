@@ -70,6 +70,7 @@ ul { list-style: none; }
 .streak { display: flex; align-items: center; gap: 4px; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); }
 .streak img { width: 16px; height: 16px; }
 .streak__time { font-weight: 600; color: var(--accent-orange); }
+.streak--done { color: var(--accent-green); }
 
 /* Сетка дней */
 .days-block { display: flex; flex-direction: column; gap: 24px; }
@@ -111,6 +112,10 @@ ul { list-style: none; }
 .day--claimed .day__value { color: var(--text-tertiary); }
 .day__status { display: flex; align-items: center; justify-content: center; gap: 4px; height: 20px; font-size: var(--text-sm); line-height: var(--leading-sm); font-weight: 600; color: var(--accent-green); }
 .day__status img { width: 16px; height: 16px; }
+
+/* Следующий (112:1734): «через» и время до открытия, арт целиком, без замка */
+.day__status--next { font-weight: 400; color: var(--text-secondary); white-space: nowrap; }
+.day__time { font-weight: 600; color: var(--text-primary); }
 
 /* Впереди: арт на 50%, замок поверх */
 .day--locked .day__art { opacity: 0.5; }

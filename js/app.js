@@ -2,7 +2,8 @@
  * Ежедневный бонус Portal Games.
  * Экраны (Figma, файл CoevBlmheFoPU63iWHtwXw):
  *   bonus  — «2б · Мало времени», награда дня доступна (95:738);
- *   reveal — «3 · Открытие лутбокса», после «Обычный лутбокс бесплатно» (97:1095).
+ *   reveal — «3 · Открытие лутбокса», после «Обычный лутбокс бесплатно» (97:1095);
+ *   claimed — «Напоминание · 1», награда дня забрана, после «Готово» (112:1734).
  * Шапка Telegram и шторка рисуются один раз, внутри шторки меняется только содержимое.
  * Без сборки: обычный скрипт, открывается и по file://, и внутри Telegram.
  */
@@ -29,7 +30,8 @@
     usdt:       { img: 'art-usdt.webp',               w: 164.54, h: 143.24, l: -31.77, t: -26.33 }
   };
   var GLOW_INSET = { 'glow-coin.svg': 45.45, 'glow-common.svg': 45.45, 'glow-legendary.svg': 45.45, 'glow-usdt.svg': 45.45,
-                     'glow-blue.svg': 51.95, 'glow-coins-locked.svg': 51.95, 'glow-epic.svg': 51.95 };
+                     'glow-blue.svg': 51.95, 'glow-coins-locked.svg': 51.95, 'glow-epic.svg': 51.95,
+                     'glow-common-sm.svg': 51.95 };
 
   // Состояние серии: день 1 получен, день 2 доступен, остальные впереди.
   var DAYS = [
@@ -41,6 +43,12 @@
     { day: 6, state: 'locked',  art: 'epic',    glow: 'glow-epic.svg',         value: 'Эпический', unit: 'лутбокс' }
   ];
   var TODAY = 2;
+  // После «Готово» (112:1734): день 2 получен, день 3 следующий — откроется со сменой дня.
+  var DAYS_AFTER = DAYS.map(function (d) {
+    if (d.day === TODAY) return Object.assign({}, d, { state: 'claimed', glow: 'glow-common-sm.svg' });
+    if (d.day === TODAY + 1) return Object.assign({}, d, { state: 'next' });
+    return d;
+  });
   var TIME_LEFT_MIN = 2 * 60 + 15; // «сгорит через 02:15»
   var REWARD = '120 монет';        // что выпало из обычного лутбокса (экран 97:1095)
   var DAYS_TO_LEGENDARY = 5;
@@ -59,9 +67,10 @@
 
   function dayCard(d) {
     var top, extra = '', after = '', label = 'День ' + d.day;
-    top = d.state === 'claimed'
-      ? '<div class="day__status"><img alt="" src="' + A + 'icon-check.svg">Получено</div>'
-      : '<div class="day__label">' + label + '</div>';
+    if (d.state === 'claimed') top = '<div class="day__status"><img alt="" src="' + A + 'icon-check.svg">Получено</div>';
+    // Следующий день: вместо номера — сколько осталось до открытия (тот же отсчёт, что «сгорит через»)
+    else if (d.state === 'next') top = '<div class="day__status day__status--next">через<span class="day__time js-timer">' + fmt(minutesLeft()) + '</span></div>';
+    else top = '<div class="day__label">' + label + '</div>';
     if (d.state === 'today') {
       extra = '<div class="day__halo"><img alt="" src="' + A + 'glow-today.svg"></div>' +
               '<div class="day__rays"><img alt="" src="' + A + 'rays-today.svg"></div>';
@@ -70,7 +79,8 @@
     }
     if (d.state === 'locked') after = '<div class="day__lock"><img alt="" src="' + A + 'icon-lock.svg"></div>';
     var aria = label + ', ' + d.value + ' ' + d.unit + ', ' +
-      (d.state === 'claimed' ? 'получено' : d.state === 'today' ? 'доступно сегодня' : 'закрыто');
+      (d.state === 'claimed' ? 'получено' : d.state === 'today' ? 'доступно сегодня' :
+       d.state === 'next' ? 'откроется через ' + fmt(minutesLeft()) : 'закрыто');
     return '<li class="day day--' + d.state + '" aria-label="' + aria + '">' + extra +
       '<div class="day__top">' + top + art(d.art, d.glow, 'day__art') + '</div>' +
       '<div class="day__reward"><div class="day__value">' + d.value + '</div><div class="day__unit">' + d.unit + '</div></div>' +
@@ -92,30 +102,36 @@
 
   /* ---------- Экраны ---------- */
 
-  function bonusScreen() {
-    var rows = [DAYS.slice(0, 3), DAYS.slice(3, 6)].map(function (r) {
+  // Сетка 3 × 2 и карточка дня 7 — общие для экрана бонуса и экрана «забрано»
+  function daysGrid(days) {
+    var rows = [days.slice(0, 3), days.slice(3, 6)].map(function (r) {
       return '<ul class="days__row">' + r.map(dayCard).join('') + '</ul>';
     });
+    return '' +
+      '<div class="days">' + rows[0] +
+        '<div class="days__lower">' + rows[1] +
+          '<div class="d7">' +
+            '<div class="d7__texts">' +
+              '<div><div class="d7__label">Награда за' + NB + '7 дней подряд</div><div class="d7__title">Легендарный лутбокс</div></div>' +
+              '<div class="d7__chips">' +
+                '<span class="chip">' + art('coin', 'glow-coin.svg') + '1' + NB + '000</span>' +
+                '<span class="chip chip--usdt">' + art('usdt', 'glow-usdt.svg') + 'шанс до' + NB + '5' + NB + 'USDT</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="d7__art"><div class="d7__art-glow"><img alt="" src="' + A + 'glow-day7.svg"></div>' + art('legendary', 'glow-legendary.svg') + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function bonusScreen() {
     return '' +
       '<div class="sheet__content">' +
         head('Ежедневный бонус',
           '<p class="streak"><img alt="" src="' + A + 'icon-clock.svg">' +
-          'Награда дня ' + TODAY + ' сгорит через<span class="streak__time" id="timer">' + fmt(minutesLeft()) + '</span></p>') +
+          'Награда дня ' + TODAY + ' сгорит через<span class="streak__time js-timer">' + fmt(minutesLeft()) + '</span></p>') +
         '<div class="days-block">' +
-          '<div class="days">' + rows[0] +
-            '<div class="days__lower">' + rows[1] +
-              '<div class="d7">' +
-                '<div class="d7__texts">' +
-                  '<div><div class="d7__label">Награда за' + NB + '7 дней подряд</div><div class="d7__title">Легендарный лутбокс</div></div>' +
-                  '<div class="d7__chips">' +
-                    '<span class="chip">' + art('coin', 'glow-coin.svg') + '1' + NB + '000</span>' +
-                    '<span class="chip chip--usdt">' + art('usdt', 'glow-usdt.svg') + 'шанс до' + NB + '5' + NB + 'USDT</span>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="d7__art"><div class="d7__art-glow"><img alt="" src="' + A + 'glow-day7.svg"></div>' + art('legendary', 'glow-legendary.svg') + '</div>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
+          daysGrid(DAYS) +
           '<p class="rule"><img alt="" src="' + A + 'icon-info.svg">Если пропустишь день, серию можно вернуть до' + NB + 'конца следующего дня</p>' +
         '</div>' +
       '</div>' +
@@ -151,7 +167,19 @@
       '</div>';
   }
 
-  var SCREENS = { bonus: bonusScreen, reveal: revealScreen };
+  function claimedScreen() {
+    return '' +
+      '<div class="sheet__content">' +
+        head('Ежедневный бонус',
+          '<p class="streak streak--done"><img alt="" src="' + A + 'icon-fire.svg">Сегодня забрано, серия ' + TODAY + ' из' + NB + '7</p>') +
+        '<div class="days-block">' + daysGrid(DAYS_AFTER) + '</div>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn btn--primary" data-action="remind">Напомнить, когда откроется день' + NB + (TODAY + 1) + '</button>' +
+      '</div>';
+  }
+
+  var SCREENS = { bonus: bonusScreen, reveal: revealScreen, claimed: claimedScreen };
 
   /* ---------- Каркас и навигация ---------- */
 
@@ -211,10 +239,12 @@
 
   go('bonus');
 
-  // Живой таймер: считает минуты до смены дня.
+  // Живой таймер: считает минуты до смены дня — «сгорит через» на бонусе и «через» у дня 3 после получения.
   setInterval(function () {
-    var el = document.getElementById('timer');
-    if (el) el.textContent = fmt(minutesLeft());
+    var t = fmt(minutesLeft());
+    Array.prototype.forEach.call(document.querySelectorAll('.js-timer'), function (el) {
+      if (el.textContent !== t) el.textContent = t;
+    });
   }, 1000);
 
   // Telegram: внутри клиента прячем нарисованную шапку, разворачиваем окно, даём вибро-отклик на кнопки.
@@ -225,7 +255,7 @@
     if (tg.setHeaderColor) tg.setHeaderColor('#000000');
     if (tg.setBackgroundColor) tg.setBackgroundColor('#0b0f1a');
     if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-    if (tg.BackButton) tg.BackButton.onClick(function () { go('bonus', { animate: true }); });
+    if (tg.BackButton) tg.BackButton.onClick(function () { go('claimed', { animate: true }); });
   }
 
   root.addEventListener('click', function (e) {
@@ -237,8 +267,9 @@
       else tg.HapticFeedback.impactOccurred('light');
     }
     if (act === 'free') go('reveal', { animate: true });
-    else if (act === 'done' || (act === 'close' && current === 'reveal')) go('bonus', { animate: true });
+    // Награда уже на балансе — дальше экран «Сегодня забрано», к выбору награды не возвращаемся
+    else if (act === 'done' || (act === 'close' && current === 'reveal')) go('claimed', { animate: true });
     else if ((act === 'tg-close' || act === 'close') && inTelegram) tg.close();
-    // «ad» — экран рекламы подключим отдельным шагом.
+    // «ad» и «remind» — экраны рекламы и напоминания подключим отдельным шагом.
   });
 })();
