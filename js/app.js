@@ -64,7 +64,7 @@
   var TIME_LEFT_MIN = 2 * 60 + 15; // «сгорит через 02:15»
   var REWARD = '120 монет';        // что выпало из обычного лутбокса (экран 97:1095)
   var DAYS_TO_LEGENDARY = 5;
-  var WITHDRAW = { have: 4.5, need: 30 };  // «До вывода 4,5 из 30 USDT» (97:1166)
+  var WITHDRAW = { have: 4.5, need: 30, won: 2.5 };  // «До вывода 4,5 из 30 USDT» (97:1166); won — только что выпало
   var reminderOn = false;          // «Разрешить» в диалоге Telegram включает напоминание
   var toastPending = false;        // тост показываем один раз, сразу после «Разрешить»
   var TOAST_MS = 2500;             // через столько тост исчезает и открывается экран дня 7
@@ -112,6 +112,8 @@
   }
 
   // Ч:ММ:СС — с секундами, чтобы отсчёт было видно сразу; без ведущего нуля, иначе не влезает в карточку дня
+  function fmtUsdt(n) { return (Math.round(n * 10) / 10).toFixed(1).replace('.', ','); }
+
   function fmt(min) {
     var s = Math.max(0, Math.floor(min * 60));
     function p(n) { return String(n).padStart(2, '0'); }
@@ -245,6 +247,7 @@
   // Неделя пройдена (97:1166): то же раскрытие, легендарный лутбокс; ниже прогресс до вывода и бонус второй недели
   function weekRevealScreen() {
     var pct = Math.round(WITHDRAW.have / WITHDRAW.need * 1000) / 10;
+    var pctFrom = Math.round((WITHDRAW.have - WITHDRAW.won) / WITHDRAW.need * 1000) / 10;
     return '' +
       '<div class="sheet__content sheet__content--week">' +
         head('Неделя пройдена', '<p class="streak"><img alt="" src="' + A + 'icon-fire.svg">7 дней подряд без пропусков</p>') +
@@ -259,9 +262,9 @@
           '</div>' +
           '<div class="week__info">' +
             '<div class="withdraw">' +
-              '<div class="withdraw__row"><span class="withdraw__label">До вывода</span><span class="withdraw__value">4,5 из' + NB + '30 USDT</span></div>' +
+              '<div class="withdraw__row"><span class="withdraw__label">До вывода</span><span class="withdraw__value"><span class="withdraw__have">' + fmtUsdt(WITHDRAW.have) + '</span> из' + NB + WITHDRAW.need + ' USDT</span></div>' +
               '<div class="withdraw__bar" role="progressbar" aria-label="До вывода" aria-valuemin="0" aria-valuemax="' + WITHDRAW.need + '" aria-valuenow="' + WITHDRAW.have + '">' +
-                '<div class="withdraw__fill" style="width:' + pct + '%"></div></div>' +
+                '<div class="withdraw__fill" style="width:' + pct + '%;--fill-from:' + pctFrom + '%"></div></div>' +
             '</div>' +
             '<div class="week2">' +
               '<p class="week2__title">На второй неделе награды ×1,5</p>' +
@@ -387,9 +390,27 @@
     // Системная кнопка «Назад» Telegram на экране награды
     if (inTelegram && tg.BackButton) { if (name === 'reveal') tg.BackButton.show(); else tg.BackButton.hide(); }
     // Сильный вибро-отклик в момент открытия (80 % от 1,25 с анимации)
+    if (name === 'weekReveal' && opts && opts.animate) countWithdraw();
     if ((name === 'reveal' || name === 'weekReveal') && opts && opts.animate && inTelegram && tg.HapticFeedback) {
       setTimeout(function () { if (current === name) tg.HapticFeedback.impactOccurred('heavy'); }, 1000);
     }
+  }
+
+  // «До вывода»: число досчитывает от прежнего значения до нового вместе с ростом полосы (CSS fill-grow, 1,6 с + 0,9 с)
+  function countWithdraw() {
+    var el = screenEl.querySelector('.withdraw__have');
+    if (!el || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    var from = WITHDRAW.have - WITHDRAW.won, to = WITHDRAW.have, t0 = null;
+    el.textContent = fmtUsdt(from);
+    setTimeout(function () {
+      requestAnimationFrame(function step(ts) {
+        if (!el.isConnected) return;
+        if (t0 === null) t0 = ts;
+        var k = Math.min(1, (ts - t0) / 900);
+        el.textContent = fmtUsdt(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      });
+    }, 1600);
   }
 
   // Диалог лежит поверх экрана; всё под ним недоступно, пока он открыт
