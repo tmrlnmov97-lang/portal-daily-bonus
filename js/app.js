@@ -13,6 +13,22 @@
  * Шапка Telegram и шторка рисуются один раз, внутри шторки меняется только содержимое.
  * Без сборки: обычный скрипт, открывается и по file://, и внутри Telegram.
  */
+/*
+ * Яндекс Метрика (счётчик 114267167): посещения, время на сайте, Вебвизор.
+ * Стартует после скрипта Telegram: внутри Telegram в адресе после # лежат данные пользователя (tgWebAppData) —
+ * Telegram их уже прочитал, убираем хвост из адреса, чтобы он не ушёл в Метрику.
+ */
+(function () {
+  if (/tgWebApp/.test(location.hash) && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+  (function (m, e, t, r, i, k, a) {
+    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+    m[i].l = 1 * new Date();
+    for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+    k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a);
+  })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=114267167', 'ym');
+  window.ym(114267167, 'init', { ssr: true, webvisor: true, clickmap: true, accurateTrackBounce: true, trackLinks: true });
+})();
+
 (function () {
   'use strict';
 
