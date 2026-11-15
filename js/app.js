@@ -6,7 +6,8 @@
  *   claimed — «Напоминание · 1», награда дня забрана, после «Готово» (112:1734);
  *   поверх claimed — диалог Telegram «Разрешить писать», после «Напомнить» (112:1761);
  *   claimed с напоминанием — тост и вторичная кнопка, после «Разрешить» (112:1800);
- *   week — «11 · День 7 доступен», сразу после того как тост ушёл (153:2409).
+ *   week — «11 · День 7 доступен», сразу после того как тост ушёл (153:2409);
+ *   weekReveal — «12 · Неделя пройдена», раскрытие легендарного лутбокса (97:1166).
  * Шапка Telegram и шторка рисуются один раз, внутри шторки меняется только содержимое.
  * Без сборки: обычный скрипт, открывается и по file://, и внутри Telegram.
  */
@@ -29,6 +30,8 @@
     rare:       { img: 'art-rare-lootbox.webp',       w: 138.8,  h: 120.83, l: -19.82, t: -13.13 },
     epic:       { img: 'art-epic-lootbox.webp',       w: 139.4,  h: 121.35, l: -19.91, t: -13.41 },
     legendary:  { img: 'art-legendary-lootbox.webp',  w: 137.78, h: 119.94, l: -18.89, t: -12.05 },
+    legendaryLg:   { img: 'art-legendary-lootbox-lg.webp',   w: 137.78, h: 119.94, l: -18.89, t: -12.05 }, // крупнее — для раскрытия
+    legendaryOpen: { img: 'art-legendary-lootbox-open.webp', w: 133.33, h: 121.95, l: -15.73, t: -10.37 },
     coin:       { img: 'art-coin.webp',               w: 197.25, h: 131.5,  l: -45.24, t: -17.31 },
     usdt:       { img: 'art-usdt.webp',               w: 164.54, h: 143.24, l: -31.77, t: -26.33 }
   };
@@ -57,6 +60,7 @@
   var TIME_LEFT_MIN = 2 * 60 + 15; // «сгорит через 02:15»
   var REWARD = '120 монет';        // что выпало из обычного лутбокса (экран 97:1095)
   var DAYS_TO_LEGENDARY = 5;
+  var WITHDRAW = { have: 4.5, need: 30 };  // «До вывода 4,5 из 30 USDT» (97:1166)
   var reminderOn = false;          // «Разрешить» в диалоге Telegram включает напоминание
   var toastPending = false;        // тост показываем один раз, сразу после «Разрешить»
   var TOAST_MS = 2500;             // через столько тост исчезает и открывается экран дня 7
@@ -158,6 +162,17 @@
       '</div>';
   }
 
+  // Арт раскрытия: лучи, свечение, закрытый (трясётся и исчезает) и открытый лутбокс — в отражённом слое, как в макете
+  function revealArt(o) {
+    return '<div class="reveal__art" aria-hidden="true"><div class="reveal__mirror">' +
+      '<div class="reveal__rays"><img alt="" src="' + A + o.rays + '"></div>' +
+      '<div class="reveal__glow"><img alt="" src="' + A + o.glow + '"></div>' +
+      art(o.closed, o.artGlow, 'reveal__closed') +
+      art(o.open, o.artGlow, 'reveal__box') +
+      '<div class="reveal__flash"></div>' +
+    '</div></div>';
+  }
+
   function revealScreen() {
     return '' +
       '<div class="sheet__content sheet__content--reveal">' +
@@ -166,13 +181,7 @@
         '<div class="reveal">' +
           '<div class="reveal__reward" role="status">' +
             // Раскрытие: закрытый лутбокс трясётся → вспышка → открытый (тайминги в app.css, «Раскрытие лутбокса»)
-            '<div class="reveal__art" aria-hidden="true"><div class="reveal__mirror">' +
-              '<div class="reveal__rays"><img alt="" src="' + A + 'rays-reveal.svg"></div>' +
-              '<div class="reveal__glow"><img alt="" src="' + A + 'glow-reveal.svg"></div>' +
-              art('commonLg', 'glow-common.svg', 'reveal__closed') +
-              art('commonOpen', 'glow-common.svg', 'reveal__box') +
-              '<div class="reveal__flash"></div>' +
-            '</div></div>' +
+            revealArt({ rays: 'rays-reveal.svg', glow: 'glow-reveal.svg', closed: 'commonLg', open: 'commonOpen', artGlow: 'glow-common.svg' }) +
             '<p class="reveal__label">Выпало</p>' +
             '<div class="reveal__sum">' + art('coin', 'glow-coin.svg', 'reveal__coin') + '<span>' + REWARD.replace(' ', NB) + '</span></div>' +
             '<p class="reveal__note">Уже на' + NB + 'балансе</p>' +
@@ -210,7 +219,40 @@
       '</div>';
   }
 
-  var SCREENS = { bonus: bonusScreen, reveal: revealScreen, claimed: claimedScreen, week: weekScreen };
+  // Неделя пройдена (97:1166): то же раскрытие, легендарный лутбокс; ниже прогресс до вывода и бонус второй недели
+  function weekRevealScreen() {
+    var pct = Math.round(WITHDRAW.have / WITHDRAW.need * 1000) / 10;
+    return '' +
+      '<div class="sheet__content sheet__content--week">' +
+        head('Неделя пройдена', '<p class="streak"><img alt="" src="' + A + 'icon-fire.svg">7 дней подряд без пропусков</p>') +
+        '<div class="week">' +
+          '<div class="week__center">' +
+            '<div class="reveal__reward reveal--legendary" role="status">' +
+              revealArt({ rays: 'rays-legendary.svg', glow: 'glow-legendary-reveal.svg', closed: 'legendaryLg', open: 'legendaryOpen', artGlow: 'glow-legendary.svg' }) +
+              '<p class="reveal__label">Выпало</p>' +
+              '<div class="reveal__sum reveal__sum--usdt">' + art('usdt', 'glow-usdt.svg', 'reveal__coin') + '<span>2,5 USDT</span></div>' +
+              '<div class="reveal__extra">' + art('coin', 'glow-coin.svg', 'reveal__extra-coin') + '<span>+' + NB + '1' + NB + '000 монет</span></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="week__info">' +
+            '<div class="withdraw">' +
+              '<div class="withdraw__row"><span class="withdraw__label">До вывода</span><span class="withdraw__value">4,5 из' + NB + '30 USDT</span></div>' +
+              '<div class="withdraw__bar" role="progressbar" aria-label="До вывода" aria-valuemin="0" aria-valuemax="' + WITHDRAW.need + '" aria-valuenow="' + WITHDRAW.have + '">' +
+                '<div class="withdraw__fill" style="width:' + pct + '%"></div></div>' +
+            '</div>' +
+            '<div class="week2">' +
+              '<p class="week2__title">На второй неделе награды ×1,5</p>' +
+              '<p class="week2__text">Серия продолжается завтра с' + NB + 'дня' + NB + '8</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn btn--primary" data-action="week-claim">Забрать награду</button>' +
+      '</div>';
+  }
+
+  var SCREENS = { bonus: bonusScreen, reveal: revealScreen, claimed: claimedScreen, week: weekScreen, weekReveal: weekRevealScreen };
 
   // Системный диалог Telegram: бот просит разрешения написать, когда откроется следующий день
   function writeAccessDialog() {
@@ -280,8 +322,8 @@
     // Системная кнопка «Назад» Telegram на экране награды
     if (inTelegram && tg.BackButton) { if (name === 'reveal') tg.BackButton.show(); else tg.BackButton.hide(); }
     // Сильный вибро-отклик в момент открытия (80 % от 1,25 с анимации)
-    if (name === 'reveal' && opts && opts.animate && inTelegram && tg.HapticFeedback) {
-      setTimeout(function () { if (current === 'reveal') tg.HapticFeedback.impactOccurred('heavy'); }, 1000);
+    if ((name === 'reveal' || name === 'weekReveal') && opts && opts.animate && inTelegram && tg.HapticFeedback) {
+      setTimeout(function () { if (current === name) tg.HapticFeedback.impactOccurred('heavy'); }, 1000);
     }
   }
 
@@ -352,16 +394,17 @@
     if (!b) return;
     var act = b.getAttribute('data-action');
     if (inTelegram && tg.HapticFeedback) {
-      if (act === 'free') tg.HapticFeedback.notificationOccurred('success');
+      if (act === 'free' || act === 'legendary') tg.HapticFeedback.notificationOccurred('success');
       else tg.HapticFeedback.impactOccurred('light');
     }
     if (act === 'free') go('reveal', { animate: true });
+    else if (act === 'legendary') go('weekReveal', { animate: true });
     // Награда уже на балансе — дальше экран «Сегодня забрано», к выбору награды не возвращаемся
     else if (act === 'done' || (act === 'close' && current === 'reveal')) go('claimed', { animate: true });
     else if (act === 'remind') openDialog();
     else if (act === 'dlg-allow') closeDialog(true);
     else if (act === 'dlg-cancel') closeDialog(false);
     else if ((act === 'tg-close' || act === 'close') && inTelegram) tg.close();
-    // «ad» и «legendary» — экраны рекламы и легендарного лутбокса подключим отдельным шагом.
+    // «ad» и «week-claim» — следующие экраны подключим отдельным шагом.
   });
 })();

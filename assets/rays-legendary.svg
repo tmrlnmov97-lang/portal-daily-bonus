@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="288" height="288" viewBox="0 0 288 288" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#208;&#155;&#209;&#131;&#209;&#135;&#208;&#184;" opacity="0.35" style="mix-blend-mode:screen">
+<path d="M144 144H288L287.16 159.52L144 144ZM144 144L277.04 199.11L270.32 213.12L144 144ZM144 144L245.82 245.82L234.26 256.2L144 144ZM144 144L199.11 277.04L184.45 282.2L144 144ZM144 144V288L128.48 287.16L144 144ZM144 144L88.89 277.04L74.88 270.32L144 144ZM144 144L42.18 245.82L31.8 234.26L144 144ZM144 144L10.96 199.11L5.8 184.45L144 144ZM144 144H0L0.84 128.48L144 144ZM144 144L10.96 88.89L17.68 74.88L144 144ZM144 144L42.18 42.18L53.74 31.8L144 144ZM144 144L88.89 10.96L103.55 5.8L144 144ZM144 144V0L159.52 0.84L144 144ZM144 144L199.11 10.96L213.12 17.68L144 144ZM144 144L245.82 42.18L256.2 53.74L144 144ZM144 144L277.04 88.89L282.2 103.55L144 144Z" fill="url(#paint0_radial_0_49)"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_49" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(144 144) scale(144)">
+<stop stop-color="#FFC245"/>
+<stop offset="0.35" stop-color="#FFC245"/>
+<stop offset="1" stop-color="#FFC245" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

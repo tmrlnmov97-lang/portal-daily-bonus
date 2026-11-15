@@ -399,6 +399,30 @@ ul { list-style: none; }
 .reveal__sum span { font-size: var(--text-3xl); line-height: var(--leading-3xl); font-weight: 700; letter-spacing: var(--tracking-3xl); }
 .reveal__note { font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-tertiary); letter-spacing: var(--tracking-sm); }
 
+/* ---------- Экран «Неделя пройдена» (Figma 97:1166) ---------- */
+/* В макете содержимое 598, под ним 24 до кнопки и 42 до низа: при 844 центр ровно 368, на высоких экранах растёт он */
+.sheet__screen--weekReveal { gap: 24px; }
+.sheet__screen--weekReveal .actions { margin-bottom: 10px; }
+.sheet__content--week { flex: 1; gap: 40px; }
+.week { flex: 1; display: flex; flex-direction: column; }
+.week__center { flex: 1 1 368px; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+/* Закрытый легендарный — как на карточке дня 7 (отражён обратно); корпус на картинке шире (137 против 114) — масштаб 0,83, дно совмещено */
+.reveal--legendary .reveal__closed { scale: -0.83 0.83; translate: 0 17px; }
+.reveal__sum--usdt span { color: var(--accent-green); }
+.reveal__extra { display: flex; align-items: center; gap: 8px; }
+.reveal__extra-coin { width: 20px; height: 20px; }
+.reveal__extra span { font-size: var(--text-base); line-height: var(--leading-base); font-weight: 700; letter-spacing: var(--tracking-base); }
+.week__info { display: flex; flex-direction: column; gap: 8px; }
+.withdraw { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-radius: var(--radius-card); background: var(--surface-card); box-shadow: inset 0 0 0 1px var(--border-card); }
+.withdraw__row { display: flex; justify-content: space-between; font-size: var(--text-sm); line-height: var(--leading-sm); letter-spacing: var(--tracking-sm); white-space: nowrap; }
+.withdraw__label { color: var(--text-secondary); }
+.withdraw__value { font-weight: 600; }
+.withdraw__bar { height: 6px; border-radius: var(--radius-pill); background: var(--surface-chip); overflow: hidden; }
+.withdraw__fill { height: 100%; border-radius: var(--radius-pill); background: var(--accent-green); }
+.week2 { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border-radius: var(--radius-card); background: var(--accent-gold-soft); box-shadow: inset 0 0 0 1px var(--accent-gold-border); white-space: nowrap; }
+.week2__title { font-size: var(--text-base); line-height: var(--leading-base); font-weight: 700; color: var(--accent-gold); letter-spacing: var(--tracking-base); }
+.week2__text { font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-secondary); letter-spacing: var(--tracking-sm); }
+
 /* ---------- Переходы между экранами ---------- */
 /*
  * Без «both»: заполненная анимация прозрачности оставляет экран отдельным слоем, и размытие под замком
@@ -422,7 +446,9 @@ ul { list-style: none; }
 .is-entering .reveal__flash { animation: flash 1.25s ease-out both; }
 .is-entering .reveal__label { animation: fade-up 0.35s ease-out 1.1s both; }
 .is-entering .reveal__sum { animation: fade-up 0.35s ease-out 1.17s both; }
-.is-entering .reveal__note { animation: fade-up 0.35s ease-out 1.24s both; }
+.is-entering .reveal__note,
+.is-entering .reveal__extra { animation: fade-up 0.35s ease-out 1.24s both; }
+.is-entering .week__info { animation: fade-up 0.35s ease-out 1.31s both; }
 
 @keyframes closed-seq {
   0% { opacity: 0; transform: scale(0.6) rotate(0deg); }
@@ -466,5 +492,7 @@ ul { list-style: none; }
   .is-entering .reveal__glow,
   .is-entering .reveal__label,
   .is-entering .reveal__sum,
-  .is-entering .reveal__note { animation: screen-in 0.3s ease-out both; }
+  .is-entering .reveal__note,
+  .is-entering .reveal__extra,
+  .is-entering .week__info { animation: screen-in 0.3s ease-out both; }
 }

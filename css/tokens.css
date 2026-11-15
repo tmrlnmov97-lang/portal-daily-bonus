@@ -40,6 +40,7 @@
   --accent-gold: #ffc245;
   --accent-gold-border: rgba(255, 194, 69, 0.32);
   --accent-gold-glow: rgba(255, 194, 69, 0.28);
+  --accent-gold-soft: rgba(255, 194, 69, 0.1);
   --accent-gold-clear: rgba(255, 194, 69, 0);
 
   /* Типографика: шкала Tailwind (размер / межстрочный) */
