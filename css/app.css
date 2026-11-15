@@ -48,8 +48,6 @@ ul { list-style: none; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 8px; /* минимальный зазор; в макете между контентом и кнопками 10 px */
   padding: 20px 16px max(34px, env(safe-area-inset-bottom));
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   background: linear-gradient(180deg, var(--bg-sheet-top) 0%, var(--bg-sheet-bottom) 32%, var(--bg-sheet-bottom) 100%);
@@ -59,6 +57,8 @@ ul { list-style: none; }
 .sheet__glow img { position: absolute; inset: -50% -25%; width: 150%; height: 200%; }
 .sheet__grabber { position: absolute; left: 50%; top: 8px; width: 36px; height: 4px; border-radius: 2px; background: var(--text-tertiary); transform: translateX(-50%); }
 
+/* Содержимое шторки меняется по экранам; кнопки прижаты к низу */
+.sheet__screen { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; /* минимальный зазор; в макете 10 px */ }
 .sheet__content { position: relative; display: flex; flex-direction: column; gap: 20px; }
 
 /* Шапка окна */
@@ -267,4 +267,47 @@ ul { list-style: none; }
   .day--today .day__halo { animation: fade-pulse 2.4s ease-in-out infinite; }
   .day--today .day__spark--big { animation: fade-pulse 1.6s ease-in-out infinite; }
   .day--today .day__spark--small { animation: fade-pulse 2s ease-in-out 0.6s infinite; }
+}
+
+/* ---------- Экран «Награда дня» (Figma 97:1095) ---------- */
+.sheet__content--reveal { gap: 40px; }
+.reveal { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 0 1 415px; min-height: 300px; }
+.reveal__reward { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
+.reveal__art { position: relative; width: 176px; height: 176px; }
+.reveal__mirror { position: absolute; inset: 0; transform: scaleX(-1); } /* в макете арт отражён по горизонтали */
+.reveal__rays { position: absolute; left: -56px; top: -56px; width: 288px; height: 288px; mix-blend-mode: screen; pointer-events: none; }
+.reveal__rays img { width: 100%; height: 100%; animation: rays-spin 16s linear infinite; transform-origin: 50% 50%; }
+.reveal__glow { position: absolute; left: 16px; top: 16px; width: 144px; height: 144px; pointer-events: none; }
+.reveal__glow img { position: absolute; left: -48px; top: -48px; width: 240px; height: 240px; }
+.reveal__box { position: absolute; left: 16px; top: 16px; width: 144px; height: 144px; }
+.reveal__label { font-size: var(--text-base); line-height: var(--leading-base); color: var(--text-secondary); letter-spacing: var(--tracking-base); }
+.reveal__sum { display: flex; align-items: center; gap: 8px; }
+.reveal__coin { width: 32px; height: 32px; }
+.reveal__sum span { font-size: var(--text-3xl); line-height: var(--leading-3xl); font-weight: 700; letter-spacing: var(--tracking-3xl); }
+.reveal__note { font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--text-tertiary); letter-spacing: var(--tracking-sm); }
+
+/* ---------- Переходы между экранами ---------- */
+.sheet__screen.is-entering { animation: screen-in 0.22s ease-out both; }
+.is-entering .reveal__art { animation: reveal-pop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.25) both; }
+.is-entering .reveal__label { animation: fade-up 0.35s ease-out 0.25s both; }
+.is-entering .reveal__sum { animation: fade-up 0.35s ease-out 0.32s both; }
+.is-entering .reveal__note { animation: fade-up 0.35s ease-out 0.39s both; }
+
+@keyframes screen-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes reveal-pop {
+  0% { opacity: 0; transform: scale(0.5); }
+  70% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal__rays img { animation: none; }
+  .is-entering .reveal__art,
+  .is-entering .reveal__label,
+  .is-entering .reveal__sum,
+  .is-entering .reveal__note { animation: screen-in 0.3s ease-out both; }
 }
