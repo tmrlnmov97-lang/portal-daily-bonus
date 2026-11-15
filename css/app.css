@@ -224,3 +224,40 @@ ul { list-style: none; }
 .btn { letter-spacing: var(--tracking-lg); }
 .d7__title { letter-spacing: var(--tracking-xl); }
 .sheet-head__title { letter-spacing: var(--tracking-2xl); }
+
+/* ---------- Микро-анимация дня «сегодня»: только transform и opacity ---------- */
+.day--today .day__rays img { animation: rays-spin 24s linear infinite; transform-origin: 50% 50%; }
+.day--today .day__halo { animation: halo-breathe 2.4s ease-in-out infinite; }
+/* Покачивание и встряска — разными свойствами translate и rotate, чтобы не перебивали друг друга */
+.day--today .day__art { animation: box-float 2.4s ease-in-out infinite, box-wiggle 4.8s ease-in-out infinite; transform-origin: 50% 75%; }
+.day--today .day__spark--big { animation: spark-twinkle 1.8s ease-in-out infinite; }
+.day--today .day__spark--small { animation: spark-twinkle 2.2s ease-in-out 0.7s infinite; }
+
+@keyframes rays-spin { to { transform: rotate(360deg); } }
+@keyframes halo-breathe {
+  0%, 100% { opacity: 0.75; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+@keyframes box-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -3px; }
+}
+/* Раз в 4,8 с лутбокс коротко встряхивается — «открой меня» */
+@keyframes box-wiggle {
+  0%, 78%, 100% { rotate: 0deg; }
+  82% { rotate: -5deg; }
+  86% { rotate: 4deg; }
+  90% { rotate: -3deg; }
+  94% { rotate: 2deg; }
+}
+@keyframes spark-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day--today .day__rays img,
+  .day--today .day__halo,
+  .day--today .day__art,
+  .day--today .day__spark { animation: none; }
+}
