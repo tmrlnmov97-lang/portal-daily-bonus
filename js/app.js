@@ -12,14 +12,14 @@
    * Свечение лежит под картинкой в рамке с отступом 15.63%; glowInset — насколько svg свечения шире этой рамки.
    */
   var ART = {
-    coins:     { img: 'art-coins-stack.png',      w: 104.4,  h: 69.6,   l: -2.2,   t: 15.06 },
-    common:    { img: 'art-common-lootbox.png',   w: 140.01, h: 121.89, l: -20.01, t: -13.68 },
-    diamond:   { img: 'art-diamond.png',          w: 164.9,  h: 109.93, l: -32.45, t: -6.92 },
-    rare:      { img: 'art-rare-lootbox.png',     w: 138.8,  h: 120.83, l: -19.82, t: -13.13 },
-    epic:      { img: 'art-epic-lootbox.png',     w: 139.4,  h: 121.35, l: -19.91, t: -13.41 },
-    legendary: { img: 'art-legendary-lootbox.png', w: 137.78, h: 119.94, l: -18.89, t: -12.05 },
-    coin:      { img: 'art-coin.png',             w: 197.25, h: 131.5,  l: -45.24, t: -17.31 },
-    usdt:      { img: 'art-usdt.png',             w: 164.54, h: 143.24, l: -31.77, t: -26.33 }
+    coins:     { img: 'art-coins-stack.webp',      w: 104.4,  h: 69.6,   l: -2.2,   t: 15.06 },
+    common:    { img: 'art-common-lootbox.webp',   w: 140.01, h: 121.89, l: -20.01, t: -13.68 },
+    diamond:   { img: 'art-diamond.webp',          w: 164.9,  h: 109.93, l: -32.45, t: -6.92 },
+    rare:      { img: 'art-rare-lootbox.webp',     w: 138.8,  h: 120.83, l: -19.82, t: -13.13 },
+    epic:      { img: 'art-epic-lootbox.webp',     w: 139.4,  h: 121.35, l: -19.91, t: -13.41 },
+    legendary: { img: 'art-legendary-lootbox.webp', w: 137.78, h: 119.94, l: -18.89, t: -12.05 },
+    coin:      { img: 'art-coin.webp',             w: 197.25, h: 131.5,  l: -45.24, t: -17.31 },
+    usdt:      { img: 'art-usdt.webp',             w: 164.54, h: 143.24, l: -31.77, t: -26.33 }
   };
   var GLOW_INSET = { 'glow-coin.svg': 45.45, 'glow-common.svg': 45.45, 'glow-legendary.svg': 45.45, 'glow-usdt.svg': 45.45,
                      'glow-blue.svg': 51.95, 'glow-coins-locked.svg': 51.95, 'glow-epic.svg': 51.95 };
